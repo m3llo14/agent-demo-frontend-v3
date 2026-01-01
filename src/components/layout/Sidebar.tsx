@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../themes/colors";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -19,30 +19,47 @@ interface ItemProps {
   title: string;
   to: string;
   icon: React.ReactNode;
-  selected: string;
-  setSelected: (title: string) => void;
+  pathname: string;
 }
 
-const Item = ({ title, to, icon, selected, setSelected }: ItemProps) => {
+const Item = ({ title, to, icon, pathname }: ItemProps) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const router = useRouter();
+  const isActive = pathname === to;
 
   const handleClick = () => {
-    setSelected(title);
     router.push(to);
   };
 
   return (
     <MenuItem
-      active={selected === title}
+      active={isActive}
       style={{
-        color: colors.grey[100],
+        color: isActive ? colors.blueAccent[500] : colors.grey[100],
+        backgroundColor: "transparent",
       }}
       onClick={handleClick}
-      icon={icon}
+      icon={
+        <Box
+          sx={{
+            color: isActive ? colors.blueAccent[500] : colors.grey[100],
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {icon}
+        </Box>
+      }
     >
-      <Typography>{title}</Typography>
+      <Typography
+        sx={{
+          fontWeight: isActive ? "bold" : "normal",
+          color: isActive ? colors.blueAccent[500] : colors.grey[100],
+        }}
+      >
+        {title}
+      </Typography>
     </MenuItem>
   );
 };
@@ -51,7 +68,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
-  const [selected, setSelected] = useState("Dashboard");
+  const pathname = usePathname();
 
   return (
     <Box
@@ -107,8 +124,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
               title="Dashboard"
               to={`/${locale}/dashboard`}
               icon={<HomeOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              pathname={pathname}
             />
 
             <Typography
@@ -122,22 +138,19 @@ const Sidebar = ({ locale }: { locale: string }) => {
               title="Manage Team"
               to={`/${locale}/experts`}
               icon={<PeopleOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              pathname={pathname}
             />
             <Item
               title="Customers"
               to={`/${locale}/customers`}
               icon={<ContactsOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              pathname={pathname}
             />
             <Item
               title="Call Logs"
               to={`/${locale}/calls`}
               icon={<ReceiptOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              pathname={pathname}
             />
             <Typography
               variant="h6"
@@ -150,15 +163,13 @@ const Sidebar = ({ locale }: { locale: string }) => {
               title="Calendar"
               to={`/${locale}/calendar`}
               icon={<CalendarTodayOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              pathname={pathname}
             />
             <Item
               title="Line Chart"
               to={`/${locale}/dashboard`}
               icon={<TimelineOutlinedIcon />}
-              selected={selected}
-              setSelected={setSelected}
+              pathname={pathname}
             />
           </Box>
         </Menu>
