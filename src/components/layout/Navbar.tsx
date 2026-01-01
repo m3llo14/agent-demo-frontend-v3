@@ -3,6 +3,7 @@
 import { Box, IconButton, useTheme } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../themes/colors";
+import { useAuth } from "@/contexts/AuthContext";
 import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -17,6 +18,7 @@ const Topbar = ({ locale }: { locale: string }) => {
   const colorMode = useContext(ColorModeContext) as {
     toggleColorMode: () => void;
   };
+  const { logout } = useAuth();
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -48,7 +50,7 @@ const Topbar = ({ locale }: { locale: string }) => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
-        <IconButton>
+        <IconButton onClick={logout} title="Logout">
           <PersonOutlinedIcon />
         </IconButton>
       </Box>
