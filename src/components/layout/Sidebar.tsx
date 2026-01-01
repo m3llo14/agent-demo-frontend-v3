@@ -26,7 +26,10 @@ const Item = ({ title, to, icon, pathname }: ItemProps) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const router = useRouter();
-  const isActive = pathname === to;
+  
+  // Dashboard route'unda sadece "Dashboard" title'ına sahip item highlight olmalı
+  // "Line Chart" aynı route'u kullanıyor ama highlight olmamalı
+  const isActive = pathname === to && !(pathname.includes('/dashboard') && title === "Line Chart");
 
   const handleClick = () => {
     router.push(to);
@@ -167,7 +170,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
             />
             <Item
               title="Line Chart"
-              to={`/${locale}/dashboard`}
+              to={`/${locale}/charts`}
               icon={<TimelineOutlinedIcon />}
               pathname={pathname}
             />
