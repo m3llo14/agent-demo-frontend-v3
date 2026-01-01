@@ -19,6 +19,7 @@ const Topbar = ({ locale }: { locale: string }) => {
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const isLightMode = theme.palette.mode === "light";
   const colorMode = useContext(ColorModeContext) as {
     toggleColorMode: () => void;
   };
@@ -86,9 +87,12 @@ const Topbar = ({ locale }: { locale: string }) => {
             elevation: 0,
             sx: {
               overflow: "visible",
-              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              filter: isLightMode
+                ? "drop-shadow(0px 2px 8px rgba(0,0,0,0.15))"
+                : "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
               mt: 1.5,
-              backgroundColor: colors.primary[400],
+              backgroundColor: isLightMode ? "#ffffff" : colors.primary[400],
+              minWidth: 200,
               "& .MuiAvatar-root": {
                 width: 32,
                 height: 32,
@@ -103,7 +107,7 @@ const Topbar = ({ locale }: { locale: string }) => {
                 right: 14,
                 width: 10,
                 height: 10,
-                bgcolor: colors.primary[400],
+                bgcolor: isLightMode ? "#ffffff" : colors.primary[400],
                 transform: "translateY(-50%) rotate(45deg)",
                 zIndex: 0,
               },
@@ -116,9 +120,9 @@ const Topbar = ({ locale }: { locale: string }) => {
             <MenuItem
               disabled
               sx={{
-                color: colors.grey[300],
+                color: isLightMode ? colors.grey[300] : colors.grey[300],
                 fontSize: "0.875rem",
-                borderBottom: `1px solid ${colors.grey[700]}`,
+                borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
               }}
             >
               <Typography variant="body2">{user.email}</Typography>
@@ -127,9 +131,10 @@ const Topbar = ({ locale }: { locale: string }) => {
           <MenuItem
             onClick={handleLogout}
             sx={{
-              color: colors.grey[100],
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
               "&:hover": {
-                backgroundColor: colors.primary[500],
+                backgroundColor: isLightMode ? colors.blueAccent[500] : colors.primary[500],
+                color: "#ffffff",
               },
             }}
           >
