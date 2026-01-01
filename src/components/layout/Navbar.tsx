@@ -24,8 +24,7 @@ const Topbar = ({ locale }: { locale: string }) => {
       <Box
         display="flex"
         sx={{
-          backgroundColor: colors.primary[400],
-          borderRadius: "3px",
+          backgroundColor: colors.primary[400],          borderRadius: "3px",
         }}
       >
         <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
