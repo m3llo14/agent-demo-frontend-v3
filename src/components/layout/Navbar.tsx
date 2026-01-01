@@ -1,6 +1,7 @@
 "use client";
 
-import { Box, IconButton, useTheme } from "@mui/material";
+import { useState } from "react";
+import { Box, IconButton, useTheme, Menu, MenuItem, Typography } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../themes/colors";
 import { useAuth } from "@/contexts/AuthContext";
@@ -11,14 +12,30 @@ import NotificationsOutlinedIcon from "@mui/icons-material/NotificationsOutlined
 import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 const Topbar = ({ locale }: { locale: string }) => {
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const colorMode = useContext(ColorModeContext) as {
     toggleColorMode: () => void;
   };
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
+
+  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    handleClose();
+    logout();
+  };
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>
@@ -50,9 +67,76 @@ const Topbar = ({ locale }: { locale: string }) => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
-        <IconButton onClick={logout} title="Logout">
+        <IconButton
+          onClick={handleClick}
+          aria-controls={open ? "account-menu" : undefined}
+          aria-haspopup="true"
+          aria-expanded={open ? "true" : undefined}
+          title={user?.email || "Account"}
+        >
           <PersonOutlinedIcon />
         </IconButton>
+        <Menu
+          anchorEl={anchorEl}
+          id="account-menu"
+          open={open}
+          onClose={handleClose}
+          onClick={handleClose}
+          PaperProps={{
+            elevation: 0,
+            sx: {
+              overflow: "visible",
+              filter: "drop-shadow(0px 2px 8px rgba(0,0,0,0.32))",
+              mt: 1.5,
+              backgroundColor: colors.primary[400],
+              "& .MuiAvatar-root": {
+                width: 32,
+                height: 32,
+                ml: -0.5,
+                mr: 1,
+              },
+              "&:before": {
+                content: '""',
+                display: "block",
+                position: "absolute",
+                top: 0,
+                right: 14,
+                width: 10,
+                height: 10,
+                bgcolor: colors.primary[400],
+                transform: "translateY(-50%) rotate(45deg)",
+                zIndex: 0,
+              },
+            },
+          }}
+          transformOrigin={{ horizontal: "right", vertical: "top" }}
+          anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+        >
+          {user && (
+            <MenuItem
+              disabled
+              sx={{
+                color: colors.grey[300],
+                fontSize: "0.875rem",
+                borderBottom: `1px solid ${colors.grey[700]}`,
+              }}
+            >
+              <Typography variant="body2">{user.email}</Typography>
+            </MenuItem>
+          )}
+          <MenuItem
+            onClick={handleLogout}
+            sx={{
+              color: colors.grey[100],
+              "&:hover": {
+                backgroundColor: colors.primary[500],
+              },
+            }}
+          >
+            <LogoutOutlinedIcon sx={{ mr: 1, fontSize: 20 }} />
+            <Typography>Log out</Typography>
+          </MenuItem>
+        </Menu>
       </Box>
     </Box>
   );

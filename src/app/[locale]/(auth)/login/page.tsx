@@ -96,7 +96,7 @@ export default function LoginPage() {
                     borderColor: colors.grey[700],
                   },
                   "&:hover fieldset": {
-                    borderColor: colors.grey[500],
+                    borderColor: colors.grey[100],
                   },
                 },
                 "& .MuiInputLabel-root": {
@@ -122,7 +122,7 @@ export default function LoginPage() {
                     borderColor: colors.grey[700],
                   },
                   "&:hover fieldset": {
-                    borderColor: colors.grey[500],
+                    borderColor: colors.grey[100],
                   },
                 },
                 "& .MuiInputLabel-root": {
@@ -147,7 +147,7 @@ export default function LoginPage() {
                 py: 1.5,
               }}
             >
-              {loading ? "Signing in..." : "Sign In"}
+              {loading ? "Signing in..." : "SIGN IN"}
             </Button>
           </form>
 
