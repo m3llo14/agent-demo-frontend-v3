@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { tokens } from "@/themes/colors";
+import { useLocale } from "@/contexts/LocaleContext";
 import { useExperts } from "@/hooks/use-experts";
 import ExpertsTable from "@/features/experts/ExpertsTable";
 import ExpertFormModal from "@/features/experts/ExpertFormModal";
@@ -20,6 +21,7 @@ export default function ExpertsPage() {
   const { data, loading, error, deleteExpert, updateExpert, createExpert } = useExperts();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { t } = useLocale();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
@@ -54,11 +56,11 @@ export default function ExpertsPage() {
   };
 
   const handleDelete = async (expertId: string) => {
-    if (window.confirm("Bu uzmanı silmek istediğinizden emin misiniz?")) {
+    if (window.confirm(t("experts.form.deleteConfirm"))) {
       try {
         await deleteExpert(expertId);
       } catch (err) {
-        alert(err instanceof Error ? err.message : "Uzman silinirken bir hata oluştu");
+        alert(err instanceof Error ? err.message : t("experts.form.deleteError"));
       }
     }
   };
@@ -104,7 +106,7 @@ export default function ExpertsPage() {
               mb: 1,
             }}
           >
-            Uzmanlar
+            {t("experts.title")}
           </Typography>
           <Typography
             variant="body1"
@@ -112,7 +114,7 @@ export default function ExpertsPage() {
               color: theme.palette.mode === "light" ? colors.grey[300] : colors.grey[300],
             }}
           >
-            Güzellik merkezinizde çalışan uzmanları yönetin.
+            {t("experts.subtitle")}
           </Typography>
         </Box>
         <Button
@@ -129,7 +131,7 @@ export default function ExpertsPage() {
             py: 1.5,
           }}
         >
-          Yeni Uzman Ekle
+          {t("experts.addNew")}
         </Button>
       </Box>
 
@@ -157,7 +159,7 @@ export default function ExpertsPage() {
               color: theme.palette.mode === "light" ? colors.grey[300] : colors.grey[300],
             }}
           >
-            Henüz uzman eklenmemiş.
+            {t("experts.noExperts")}
           </Typography>
         </Box>
       )}

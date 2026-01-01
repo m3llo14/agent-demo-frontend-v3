@@ -5,49 +5,44 @@ import StatsGrid from "@/components/dashboard/StatsGrid";
 import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { StatBoxProps } from "@/features/dashboard/StatBox";
 import { tokens } from "@/themes/colors";
-import EmailOutlinedIcon from "@mui/icons-material/EmailOutlined";
-import PointOfSaleOutlinedIcon from "@mui/icons-material/PointOfSaleOutlined";
-import PersonAddOutlinedIcon from "@mui/icons-material/PersonAddOutlined";
-import TrafficOutlinedIcon from "@mui/icons-material/TrafficOutlined";
+import { useLocale } from "@/contexts/LocaleContext";
+import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
+import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
+import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 
 const transformStatsDataToStatBoxProps = (
   data: NonNullable<ReturnType<typeof useDashboardStats>["data"]>,
-  colors: ReturnType<typeof tokens>
+  colors: ReturnType<typeof tokens>,
+  t: (key: string) => string
 ): StatBoxProps[] => {
   return [
     {
-      title: data.emailsSent.toLocaleString(),
-      subtitle: "Emails Sent",
+      label: t("dashboard.totalAppointments"),
+      value: data.totalAppointments,
+      description: t("dashboard.last30Days"),
       icon: (
-        <EmailOutlinedIcon
-          sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
+        <CalendarTodayOutlinedIcon
+          sx={{ fontSize: "26px", color: colors.blueAccent[500] }}
         />
       ),
     },
     {
-      title: data.salesObtained.toLocaleString(),
-      subtitle: "Sales Obtained",
+      label: t("dashboard.pendingAppointments"),
+      value: data.pendingAppointments,
+      description: t("dashboard.awaitingAction"),
       icon: (
-        <PointOfSaleOutlinedIcon
-          sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
+        <PendingActionsOutlinedIcon
+          sx={{ fontSize: "26px", color: colors.blueAccent[500] }}
         />
       ),
     },
     {
-      title: data.newClients.toLocaleString(),
-      subtitle: "New Clients",
+      label: t("dashboard.customers"),
+      value: data.customers,
+      description: t("dashboard.registeredCustomers"),
       icon: (
-        <PersonAddOutlinedIcon
-          sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
-        />
-      ),
-    },
-    {
-      title: data.trafficReceived.toLocaleString(),
-      subtitle: "Traffic Received",
-      icon: (
-        <TrafficOutlinedIcon
-          sx={{ fontSize: "26px", color: colors.greenAccent[500] }}
+        <PeopleOutlinedIcon
+          sx={{ fontSize: "26px", color: colors.blueAccent[500] }}
         />
       ),
     },
@@ -58,6 +53,7 @@ export default function DashboardPage() {
   const { data, loading, error } = useDashboardStats();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { t } = useLocale();
 
   if (loading) {
     return (
@@ -84,7 +80,7 @@ export default function DashboardPage() {
     return null;
   }
 
-  const stats = transformStatsDataToStatBoxProps(data, colors);
+  const stats = transformStatsDataToStatBoxProps(data, colors, t);
 
   return (
     <Box sx={{ width: "100%" }}>

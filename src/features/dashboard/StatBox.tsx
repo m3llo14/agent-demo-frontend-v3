@@ -4,41 +4,64 @@ import { Box, Typography, useTheme } from "@mui/material";
 import { tokens } from "@/themes/colors";
 
 export interface StatBoxProps {
-  title: string;
-  subtitle: string;
-  icon: React.ReactNode;
+  label: string; // Card başlığı (örn: "Toplam Randevu")
+  value: string | number; // Büyük sayı (örn: "8")
+  description: string; // Alt açıklama (örn: "Son 30 gün")
+  icon?: React.ReactNode; // Opsiyonel icon
 }
 
-const StatBox = ({ title, subtitle, icon }: StatBoxProps) => {
+const StatBox = ({ label, value, description, icon }: StatBoxProps) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const isLightMode = theme.palette.mode === "light";
 
   return (
     <Box
       width="100%"
       sx={{
-        backgroundColor: colors.primary[400],
+        backgroundColor: isLightMode ? "#ffffff" : colors.primary[400],
         borderRadius: "8px",
         p: 3,
         height: "100%",
         transition: "transform 0.2s, box-shadow 0.2s",
+        boxShadow: isLightMode ? "0 2px 8px rgba(0,0,0,0.1)" : "none",
         "&:hover": {
           transform: "translateY(-4px)",
-          boxShadow: `0 8px 16px ${colors.primary[500]}40`,
+          boxShadow: isLightMode
+            ? "0 4px 12px rgba(0,0,0,0.15)"
+            : `0 8px 16px ${colors.primary[500]}40`,
         },
       }}
     >
       <Box>
-        {icon}
+        {icon && <Box sx={{ mb: 1 }}>{icon}</Box>}
         <Typography
-          variant="h4"
-          fontWeight="bold"
-          sx={{ color: colors.grey[100], mt: 1, mb: 1 }}
+          variant="body2"
+          sx={{
+            color: isLightMode ? colors.grey[300] : colors.grey[300],
+            mb: 1,
+            fontWeight: 500,
+          }}
         >
-          {title}
+          {label}
         </Typography>
-        <Typography variant="h5" sx={{ color: colors.greenAccent[500] }}>
-          {subtitle}
+        <Typography
+          variant="h3"
+          fontWeight="bold"
+          sx={{
+            color: isLightMode ? colors.grey[100] : colors.grey[100],
+            mb: 1,
+          }}
+        >
+          {typeof value === "number" ? value.toLocaleString() : value}
+        </Typography>
+        <Typography
+          variant="body2"
+          sx={{
+            color: isLightMode ? colors.grey[400] : colors.grey[400],
+          }}
+        >
+          {description}
         </Typography>
       </Box>
     </Box>

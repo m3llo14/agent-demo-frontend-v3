@@ -13,6 +13,7 @@ import {
 } from "@mui/material";
 import { tokens } from "@/themes/colors";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -22,6 +23,7 @@ export default function LoginPage() {
   const { login } = useAuth();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { t } = useLocale();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +33,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
     } catch (err: any) {
-      setError(err.message || "Login failed. Please try again.");
+      setError(err.message || t("auth.loginFailed"));
     } finally {
       setLoading(false);
     }
@@ -65,13 +67,13 @@ export default function LoginPage() {
             gutterBottom
             sx={{ color: colors.grey[100], textAlign: "center", mb: 3 }}
           >
-            Artific Agent
+            {t("auth.title")}
           </Typography>
           <Typography
             variant="body2"
             sx={{ color: colors.grey[300], textAlign: "center", mb: 3 }}
           >
-            Sign in to your account
+            {t("auth.subtitle")}
           </Typography>
 
           {error && (
@@ -83,7 +85,7 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit}>
             <TextField
               fullWidth
-              label="Email"
+              label={t("common.email")}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -109,7 +111,7 @@ export default function LoginPage() {
             />
             <TextField
               fullWidth
-              label="Password"
+              label={t("common.password")}
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -147,18 +149,18 @@ export default function LoginPage() {
                 py: 1.5,
               }}
             >
-              {loading ? "Signing in..." : "SIGN IN"}
+              {loading ? t("common.signingIn") : t("common.signIn")}
             </Button>
           </form>
 
           <Box sx={{ mt: 3, textAlign: "center" }}>
             <Typography variant="body2" sx={{ color: colors.grey[400], mb: 1 }}>
-              Test Accounts:
+              {t("auth.testAccounts")}:
             </Typography>
             <Typography variant="caption" sx={{ color: colors.grey[500] }}>
-              Admin: admin@example.com
+              {t("auth.adminAccount")}
               <br />
-              Merchant: merchant@example.com
+              {t("auth.merchantAccount")}
             </Typography>
           </Box>
         </CardContent>

@@ -3,18 +3,9 @@
 import { useState, useEffect } from "react";
 
 export interface DashboardStatsData {
-  emailsSent: number;
-  salesObtained: number;
-  newClients: number;
-  trafficReceived: number;
-  emailsProgress: number;
-  salesProgress: number;
-  clientsProgress: number;
-  trafficProgress: number;
-  emailsIncrease: string;
-  salesIncrease: string;
-  clientsIncrease: string;
-  trafficIncrease: string;
+  totalAppointments: number;
+  pendingAppointments: number;
+  customers: number;
 }
 
 // TODO: API endpoint'i eklendiğinde bu fonksiyon gerçek API çağrısı yapacak
@@ -25,18 +16,9 @@ const fetchDashboardStats = async (): Promise<DashboardStatsData> => {
   return new Promise((resolve) => {
     setTimeout(() => {
       resolve({
-        emailsSent: 12361,
-        salesObtained: 431225,
-        newClients: 32441,
-        trafficReceived: 1325134,
-        emailsProgress: 14,
-        salesProgress: 21,
-        clientsProgress: 5,
-        trafficProgress: 43,
-        emailsIncrease: "+14%",
-        salesIncrease: "+21%",
-        clientsIncrease: "+5%",
-        trafficIncrease: "+43%",
+        totalAppointments: 8,
+        pendingAppointments: 2,
+        customers: 1710,
       });
     }, 100);
   });

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../themes/colors";
+import { useLocale } from "@/contexts/LocaleContext";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
@@ -29,7 +30,7 @@ const Item = ({ title, to, icon, pathname }: ItemProps) => {
   
   // Dashboard route'unda sadece "Dashboard" title'ına sahip item highlight olmalı
   // "Line Chart" aynı route'u kullanıyor ama highlight olmamalı
-  const isActive = pathname === to && !(pathname.includes('/dashboard') && title === "Line Chart");
+  const isActive = pathname === to && !(pathname.includes('/dashboard') && title.includes("Line Chart"));
 
   const handleClick = () => {
     router.push(to);
@@ -72,6 +73,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const pathname = usePathname();
+  const { t } = useLocale();
 
   return (
     <Box
@@ -124,7 +126,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
 
           <Box paddingLeft={isCollapsed ? undefined : "10%"}>
             <Item
-              title="Dashboard"
+              title={t("sidebar.dashboard")}
               to={`/${locale}/dashboard`}
               icon={<HomeOutlinedIcon />}
               pathname={pathname}
@@ -135,22 +137,22 @@ const Sidebar = ({ locale }: { locale: string }) => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Manegment
+              {t("sidebar.management")}
             </Typography>
             <Item
-              title="Manage Team"
+              title={t("sidebar.manageTeam")}
               to={`/${locale}/experts`}
               icon={<PeopleOutlinedIcon />}
               pathname={pathname}
             />
             <Item
-              title="Customers"
+              title={t("sidebar.customers")}
               to={`/${locale}/customers`}
               icon={<ContactsOutlinedIcon />}
               pathname={pathname}
             />
             <Item
-              title="Call Logs"
+              title={t("sidebar.callLogs")}
               to={`/${locale}/calls`}
               icon={<ReceiptOutlinedIcon />}
               pathname={pathname}
@@ -160,16 +162,16 @@ const Sidebar = ({ locale }: { locale: string }) => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Pages
+              {t("sidebar.pages")}
             </Typography>
             <Item
-              title="Calendar"
+              title={t("sidebar.calendar")}
               to={`/${locale}/calendar`}
               icon={<CalendarTodayOutlinedIcon />}
               pathname={pathname}
             />
             <Item
-              title="Line Chart"
+              title={t("sidebar.lineChart")}
               to={`/${locale}/charts`}
               icon={<TimelineOutlinedIcon />}
               pathname={pathname}

@@ -18,6 +18,7 @@ import {
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
 import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { tokens } from "@/themes/colors";
+import { useLocale } from "@/contexts/LocaleContext";
 import { Expert } from "@/types/experts";
 
 interface ExpertsTableProps {
@@ -29,8 +30,8 @@ interface ExpertsTableProps {
 const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-
   const isLightMode = theme.palette.mode === "light";
+  const { t } = useLocale();
 
   return (
     <TableContainer
@@ -55,7 +56,7 @@ const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
                 borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
               }}
             >
-              Ad Soyad
+              {t("experts.table.name")}
             </TableCell>
             <TableCell
               sx={{
@@ -64,7 +65,7 @@ const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
                 borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
               }}
             >
-              Yaş
+              {t("experts.table.age")}
             </TableCell>
             <TableCell
               sx={{
@@ -73,7 +74,7 @@ const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
                 borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
               }}
             >
-              Cinsiyet
+              {t("experts.table.gender")}
             </TableCell>
             <TableCell
               sx={{
@@ -82,7 +83,7 @@ const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
                 borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
               }}
             >
-              Deneyim (Yıl)
+              {t("experts.table.experience")}
             </TableCell>
             <TableCell
               sx={{
@@ -92,7 +93,7 @@ const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
                 textAlign: "center",
               }}
             >
-              İşlemler
+              {t("experts.table.actions")}
             </TableCell>
           </TableRow>
         </TableHead>
@@ -115,10 +116,12 @@ const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
                 {expert.age}
               </TableCell>
               <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
-                {expert.gender}
+                {expert.gender === "Kadın"
+                  ? t("experts.gender.female")
+                  : t("experts.gender.male")}
               </TableCell>
               <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
-                {expert.experience} yıl
+                {expert.experience} {t("experts.year")}
               </TableCell>
               <TableCell>
                 <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>

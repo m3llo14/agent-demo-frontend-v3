@@ -206,12 +206,27 @@ export const useMode = (): [
   Theme,
   { toggleColorMode: () => void }
 ] => {
-  const [mode, setMode] = useState<ColorMode>("dark");
+  // localStorage'dan tema tercihini oku, yoksa "dark" kullan
+  const [mode, setMode] = useState<ColorMode>(() => {
+    if (typeof window !== "undefined") {
+      const savedMode = localStorage.getItem("colorMode") as ColorMode | null;
+      return savedMode || "dark";
+    }
+    return "dark";
+  });
 
   const colorMode = useMemo(
     () => ({
-      toggleColorMode: () =>
-        setMode((prev) => (prev === "light" ? "dark" : "light")),
+      toggleColorMode: () => {
+        setMode((prev) => {
+          const newMode = prev === "light" ? "dark" : "light";
+          // localStorage'a kaydet
+          if (typeof window !== "undefined") {
+            localStorage.setItem("colorMode", newMode);
+          }
+          return newMode;
+        });
+      },
     }),
     []
   );

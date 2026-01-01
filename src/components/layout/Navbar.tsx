@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { Box, IconButton, useTheme, Menu, MenuItem, Typography } from "@mui/material";
+import { Box, IconButton, useTheme, Menu, MenuItem, Typography, Select, FormControl } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../themes/colors";
 import { useAuth } from "@/contexts/AuthContext";
+import { useLocale } from "@/contexts/LocaleContext";
 import InputBase from "@mui/material/InputBase";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
@@ -13,6 +14,7 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import SearchIcon from "@mui/icons-material/Search";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
+import LanguageIcon from "@mui/icons-material/Language";
 
 const Topbar = ({ locale }: { locale: string }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -24,6 +26,7 @@ const Topbar = ({ locale }: { locale: string }) => {
     toggleColorMode: () => void;
   };
   const { logout, user } = useAuth();
+  const { locale: currentLocale, t, changeLocale } = useLocale();
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -44,10 +47,11 @@ const Topbar = ({ locale }: { locale: string }) => {
       <Box
         display="flex"
         sx={{
-          backgroundColor: colors.primary[400],          borderRadius: "3px",
+          backgroundColor: colors.primary[400],
+          borderRadius: "3px",
         }}
       >
-        <InputBase sx={{ ml: 2, flex: 1 }} placeholder="Search" />
+        <InputBase sx={{ ml: 2, flex: 1 }} placeholder={t("common.search")} />
         <IconButton type="button" sx={{ p: 1 }}>
           <SearchIcon />
         </IconButton>
@@ -55,6 +59,50 @@ const Topbar = ({ locale }: { locale: string }) => {
 
       {/* ICONS */}
       <Box display="flex">
+        {/* Language Selector */}
+        <FormControl
+          size="small"
+          sx={{
+            minWidth: 80,
+            mr: 1,
+            "& .MuiOutlinedInput-root": {
+              backgroundColor: isLightMode ? "#ffffff" : colors.primary[500],
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              "& fieldset": {
+                borderColor: isLightMode ? colors.grey[700] : colors.grey[700],
+              },
+              "&:hover fieldset": {
+                borderColor: isLightMode ? colors.grey[500] : colors.grey[500],
+              },
+            },
+            "& .MuiSelect-icon": {
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+            },
+          }}
+        >
+          <Select
+            value={currentLocale}
+            onChange={(e) => changeLocale(e.target.value as "tr" | "en")}
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              "& .MuiSelect-select": {
+                py: 1,
+                px: 1.5,
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+              },
+            }}
+          >
+            <MenuItem value="tr" sx={{ color: colors.grey[100] }}>
+              🇹🇷 TR
+            </MenuItem>
+            <MenuItem value="en" sx={{ color: colors.grey[100] }}>
+              🇬🇧 EN
+            </MenuItem>
+          </Select>
+        </FormControl>
+
         <IconButton onClick={colorMode.toggleColorMode}>
           {theme.palette.mode === "dark" ? (
             <DarkModeOutlinedIcon />
@@ -139,7 +187,7 @@ const Topbar = ({ locale }: { locale: string }) => {
             }}
           >
             <LogoutOutlinedIcon sx={{ mr: 1, fontSize: 20 }} />
-            <Typography>Log out</Typography>
+            <Typography>{t("common.logout")}</Typography>
           </MenuItem>
         </Menu>
       </Box>

@@ -14,6 +14,7 @@ import {
   Typography,
 } from "@mui/material";
 import { tokens } from "@/themes/colors";
+import { useLocale } from "@/contexts/LocaleContext";
 import { Expert } from "@/types/experts";
 
 interface ExpertFormModalProps {
@@ -33,6 +34,7 @@ export default function ExpertFormModal({
 }: ExpertFormModalProps) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const { t } = useLocale();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -67,16 +69,16 @@ export default function ExpertFormModal({
   const validate = (): boolean => {
     const newErrors: Record<string, string> = {};
 
-    if (!formData.name.trim()) newErrors.name = "İsim gereklidir";
-    if (!formData.surname.trim()) newErrors.surname = "Soyisim gereklidir";
+    if (!formData.name.trim()) newErrors.name = t("experts.form.validation.nameRequired");
+    if (!formData.surname.trim()) newErrors.surname = t("experts.form.validation.surnameRequired");
 
     const age = parseInt(formData.age);
     if (!formData.age || isNaN(age) || age < 18 || age > 100)
-      newErrors.age = "Yaş 18-100 arasında olmalıdır";
+      newErrors.age = t("experts.form.validation.ageInvalid");
 
     const experience = parseInt(formData.experience);
     if (!formData.experience || isNaN(experience) || experience < 0 || experience > 50)
-      newErrors.experience = "Deneyim 0-50 yıl arasında olmalıdır";
+      newErrors.experience = t("experts.form.validation.experienceInvalid");
 
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
@@ -181,14 +183,14 @@ export default function ExpertFormModal({
           }}
         >
           <Typography variant="h5" sx={{ fontWeight: "bold" }}>
-            {mode === "create" ? "Yeni Uzman Ekle" : "Uzman Düzenle"}
+            {mode === "create" ? t("experts.form.addTitle") : t("experts.form.editTitle")}
           </Typography>
         </DialogTitle>
 
         <DialogContent sx={{ mt: 2 }}>
           <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
             <TextField
-              label="İsim"
+              label={t("experts.form.name")}
               value={formData.name}
               onChange={handleChange("name")}
               fullWidth
@@ -199,7 +201,7 @@ export default function ExpertFormModal({
             />
 
             <TextField
-              label="Soyisim"
+              label={t("experts.form.surname")}
               value={formData.surname}
               onChange={handleChange("surname")}
               fullWidth
@@ -211,7 +213,7 @@ export default function ExpertFormModal({
 
             <Box sx={{ display: "flex", gap: 2 }}>
               <TextField
-                label="Yaş"
+                label={t("experts.form.age")}
                 type="number"
                 value={formData.age}
                 onChange={handleChange("age")}
@@ -224,7 +226,7 @@ export default function ExpertFormModal({
               />
 
               <TextField
-                label="Cinsiyet"
+                label={t("experts.form.gender")}
                 select
                 value={formData.gender}
                 onChange={handleChange("gender")}
@@ -236,19 +238,19 @@ export default function ExpertFormModal({
                   value="Kadın"
                   sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}
                 >
-                  Kadın
+                  {t("experts.form.female")}
                 </MenuItem>
                 <MenuItem
                   value="Erkek"
                   sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}
                 >
-                  Erkek
+                  {t("experts.form.male")}
                 </MenuItem>
               </TextField>
             </Box>
 
             <TextField
-              label="Deneyim (Yıl)"
+              label={t("experts.form.experience")}
               type="number"
               value={formData.experience}
               onChange={handleChange("experience")}
@@ -278,8 +280,8 @@ export default function ExpertFormModal({
                 backgroundColor: isLightMode ? colors.grey[900] : colors.primary[500],
               },
             }}
-          >
-            İptal
+            >
+            {t("common.cancel")}
           </Button>
           <Button
             type="submit"
@@ -299,11 +301,11 @@ export default function ExpertFormModal({
           >
             {loading
               ? mode === "create"
-                ? "Ekleniyor..."
-                : "Güncelleniyor..."
+                ? t("experts.form.adding")
+                : t("experts.form.updating")
               : mode === "create"
-              ? "Ekle"
-              : "Güncelle"}
+              ? t("experts.form.add")
+              : t("experts.form.update")}
           </Button>
         </DialogActions>
       </form>
