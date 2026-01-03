@@ -242,4 +242,17 @@ export default {
   settings: {
     title: "Ayarlar",
   },
+  notifications: {
+    title: "Bildirimler",
+    noNotifications: "Henüz bildirim yok",
+    status: {
+      pending: "Bekliyor",
+      confirmed: "Onaylandı",
+      cancelled: "İptal Edildi",
+    },
+    hoursAgo: "yaklaşık",
+    daysAgo: "yaklaşık",
+    minutesAgo: "yaklaşık",
+    timeAgoSuffix: "önce",
+  },
 };

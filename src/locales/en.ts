@@ -242,4 +242,17 @@ export default {
   settings: {
     title: "Settings",
   },
+  notifications: {
+    title: "Notifications",
+    noNotifications: "No notifications yet",
+    status: {
+      pending: "Pending",
+      confirmed: "Confirmed",
+      cancelled: "Cancelled",
+    },
+    hoursAgo: "approximately",
+    daysAgo: "approximately",
+    minutesAgo: "approximately",
+    timeAgoSuffix: "ago",
+  },
 };
