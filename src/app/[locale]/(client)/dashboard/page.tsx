@@ -91,7 +91,7 @@ export default function DashboardPage() {
   return (
     <Box sx={{ width: "100%" }}>
       {/* Stats Cards */}
-      <Box sx={{ mb: 4 }}>
+      <Box sx={{ mb: 4, width: "100%" }}>
         <StatsGrid stats={stats} />
       </Box>
 
@@ -101,13 +101,14 @@ export default function DashboardPage() {
           display: "flex",
           gap: 3,
           mb: 4,
+          width: "100%",
           flexDirection: { xs: "column", md: "row" },
         }}
       >
-        <Box sx={{ flex: { xs: 1, md: 2 } }}>
+        <Box sx={{ flex: { xs: 1, md: 2 }, width: "100%" }}>
           <LineChart data={chartData} loading={chartLoading} />
         </Box>
-        <Box sx={{ flex: { xs: 1, md: 1 }, minWidth: { md: "400px" } }}>
+        <Box sx={{ flex: { xs: 1, md: 1 }, minWidth: { md: "400px" }, width: "100%" }}>
           <CallLogsPreview
             calls={calls}
             loading={callsLoading}

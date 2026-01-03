@@ -14,8 +14,8 @@ const StatsGrid = ({ stats }: StatsGridProps) => {
         width: "100%",
         display: "flex",
         gap: 3,
-        px: 2,
         flexWrap: { xs: "wrap", sm: "nowrap" },
+        boxSizing: "border-box",
       }}
     >
       {stats.map((stat, index) => (
@@ -24,6 +24,8 @@ const StatsGrid = ({ stats }: StatsGridProps) => {
           sx={{
             flex: 1,
             minWidth: { xs: "100%", sm: 0 },
+            maxWidth: { sm: "none" },
+            boxSizing: "border-box",
           }}
         >
           <StatBox {...stat} />
