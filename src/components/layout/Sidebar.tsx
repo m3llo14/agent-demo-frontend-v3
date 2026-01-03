@@ -1,11 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
+import { Sidebar as ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
-import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
@@ -114,7 +113,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
       }}
     >
       <ProSidebar collapsed={isCollapsed}>
-        <Menu iconShape="square">
+        <Menu>
           {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}

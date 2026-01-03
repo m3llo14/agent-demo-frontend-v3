@@ -225,6 +225,15 @@ export default {
   },
   charts: {
     title: "Charts",
+    lineChart: {
+      title: "Monthly Appointments Chart",
+      subtitle: "Appointment counts by month",
+      xAxisLabel: "Months",
+      yAxisLabel: "Number of Appointments",
+      loading: "Loading chart...",
+      error: "An error occurred while loading the chart",
+      noData: "No data available to display.",
+    },
   },
   settings: {
     title: "Settings",

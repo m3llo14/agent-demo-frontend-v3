@@ -20,7 +20,7 @@ const StatsGrid = ({ stats }: StatsGridProps) => {
     >
       {stats.map((stat, index) => (
         <Box
-          key={stat.title || index}
+          key={stat.label || index}
           sx={{
             flex: 1,
             minWidth: { xs: "100%", sm: 0 },

@@ -225,6 +225,15 @@ export default {
   },
   charts: {
     title: "Grafikler",
+    lineChart: {
+      title: "Aylık Randevu Grafiği",
+      subtitle: "Aylara göre randevu sayıları",
+      xAxisLabel: "Aylar",
+      yAxisLabel: "Randevu Sayısı",
+      loading: "Grafik yükleniyor...",
+      error: "Grafik yüklenirken bir hata oluştu",
+      noData: "Gösterilecek veri bulunmamaktadır.",
+    },
   },
   settings: {
     title: "Ayarlar",

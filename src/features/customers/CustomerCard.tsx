@@ -14,7 +14,7 @@ import { tokens } from "@/themes/colors";
 import { Customer, AppointmentStatus } from "@/types/customers";
 import InfoOutlinedIcon from "@mui/icons-material/InfoOutlined";
 import PhoneOutlinedIcon from "@mui/icons-material/PhoneOutlined";
-import AccessTimeOutlinedIcon from "@mui/icons-material/AccessTimeOutlined";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PhoneIcon from "@mui/icons-material/Phone";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
@@ -183,7 +183,7 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
               mb: 1,
             }}
           >
-            <AccessTimeOutlinedIcon
+            <AccessTimeIcon
               sx={{
                 fontSize: 18,
                 color: isLightMode ? colors.grey[400] : colors.grey[400],
@@ -385,7 +385,7 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
                 </Box>
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <AccessTimeOutlinedIcon
+                  <AccessTimeIcon
                     sx={{
                       fontSize: 16,
                       color: isLightMode ? colors.grey[400] : colors.grey[400],
