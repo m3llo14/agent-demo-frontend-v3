@@ -42,6 +42,10 @@ export default {
     last30Days: "Last 30 days",
     awaitingAction: "Awaiting action",
     registeredCustomers: "Registered Customers",
+    recentCalls: "Recent Calls",
+    calendar: "Calendar",
+    viewAll: "View All",
+    noRecentCalls: "No recent calls",
   },
   experts: {
     title: "Experts",

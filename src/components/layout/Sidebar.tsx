@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import React from "react";
 import { Sidebar as ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import Link from "next/link";
@@ -35,12 +36,29 @@ const Item = ({ title, to, icon, pathname }: ItemProps) => {
     router.push(to);
   };
 
+  // Icon'u clone edip doğrudan renk prop'u ekle
+  const iconWithColor = React.isValidElement(icon)
+    ? React.cloneElement(icon as React.ReactElement<any>, {
+        sx: {
+          color: isActive ? colors.blueAccent[500] : colors.grey[100],
+          fill: isActive ? colors.blueAccent[500] : colors.grey[100],
+        },
+        style: {
+          color: isActive ? colors.blueAccent[500] : colors.grey[100],
+          fill: isActive ? colors.blueAccent[500] : colors.grey[100],
+        },
+      })
+    : icon;
+
   return (
     <MenuItem
       active={isActive}
       style={{
         color: isActive ? colors.blueAccent[500] : colors.grey[100],
         backgroundColor: "transparent",
+      }}
+      rootStyles={{
+        color: isActive ? colors.blueAccent[500] : colors.grey[100],
       }}
       onClick={handleClick}
       icon={
@@ -49,9 +67,16 @@ const Item = ({ title, to, icon, pathname }: ItemProps) => {
             color: isActive ? colors.blueAccent[500] : colors.grey[100],
             display: "flex",
             alignItems: "center",
+            "& svg": {
+              color: `${isActive ? colors.blueAccent[500] : colors.grey[100]} !important`,
+              fill: `${isActive ? colors.blueAccent[500] : colors.grey[100]} !important`,
+            },
+            "& path": {
+              fill: `${isActive ? colors.blueAccent[500] : colors.grey[100]} !important`,
+            },
           }}
         >
-          {icon}
+          {iconWithColor}
         </Box>
       }
     >
@@ -80,6 +105,21 @@ const Sidebar = ({ locale }: { locale: string }) => {
     setMounted(true);
   }, []);
 
+  const isLightMode = theme.palette.mode === "light";
+  const sidebarBgColor = isLightMode ? colors.primary[400] : colors.primary[500];
+  const sidebarHoverBg = isLightMode ? colors.primary[300] : colors.primary[400];
+
+  // CSS variable'ları set et - sidebar renkleri için
+  useEffect(() => {
+    if (typeof document !== "undefined" && mounted) {
+      document.documentElement.style.setProperty("--sidebar-bg", sidebarBgColor);
+      document.documentElement.style.setProperty("--sidebar-icon-color", colors.grey[100]);
+      document.documentElement.style.setProperty("--sidebar-active-icon-color", colors.blueAccent[500]);
+      document.documentElement.style.setProperty("--sidebar-hover-icon-color", colors.blueAccent[400]);
+      document.documentElement.style.setProperty("--sidebar-hover-bg", sidebarHoverBg);
+    }
+  }, [sidebarBgColor, sidebarHoverBg, colors.grey, colors.blueAccent, mounted]);
+
   // Server-side render sırasında boş render döndür
   if (!mounted) {
     return (
@@ -95,32 +135,166 @@ const Sidebar = ({ locale }: { locale: string }) => {
   return (
     <Box
       sx={{
+        height: "100vh",
+        backgroundColor: sidebarBgColor,
+        "& .pro-sidebar": {
+          backgroundColor: `${sidebarBgColor} !important`,
+          background: `${sidebarBgColor} !important`,
+        },
         "& .pro-sidebar-inner": {
-          background: `${colors.primary[400]} !important`,
+          background: `${sidebarBgColor} !important`,
+          backgroundColor: `${sidebarBgColor} !important`,
+        },
+        "& .pro-sidebar > div": {
+          backgroundColor: `${sidebarBgColor} !important`,
+          background: `${sidebarBgColor} !important`,
+        },
+        "& .pro-menu": {
+          backgroundColor: `${sidebarBgColor} !important`,
+          background: `${sidebarBgColor} !important`,
         },
         "& .pro-icon-wrapper": {
-          backgroundColor: "transparent !important",
+          backgroundColor: `${sidebarBgColor} !important`,
+        },
+        "& .pro-icon-wrapper svg": {
+          color: `${colors.grey[100]} !important`,
+          fill: `${colors.grey[100]} !important`,
+        },
+        "& .pro-menu-item.active .pro-icon-wrapper svg": {
+          color: `${colors.blueAccent[500]} !important`,
+          fill: `${colors.blueAccent[500]} !important`,
+        },
+        "& .pro-menu-item:hover .pro-icon-wrapper svg": {
+          color: `${colors.blueAccent[400]} !important`,
+          fill: `${colors.blueAccent[400]} !important`,
         },
         "& .pro-inner-item": {
           padding: "5px 35px 5px 20px !important",
+          color: `${colors.grey[100]} !important`,
+          backgroundColor: `${sidebarBgColor} !important`,
         },
         "& .pro-inner-item:hover": {
-          color: "#868dfb !important",
+          color: `${colors.blueAccent[400]} !important`,
+          backgroundColor: `${sidebarHoverBg} !important`,
+        },
+        "& .pro-menu-item": {
+          color: `${colors.grey[100]} !important`,
         },
         "& .pro-menu-item.active": {
-          color: "#6870fa !important",
+          color: `${colors.blueAccent[500]} !important`,
+          backgroundColor: `${sidebarHoverBg} !important`,
+        },
+        "& .pro-menu-item:hover": {
+          color: `${colors.blueAccent[400]} !important`,
+          backgroundColor: `${sidebarHoverBg} !important`,
+        },
+        "& .pro-menu-item button": {
+          color: `${colors.grey[100]} !important`,
+        },
+        "& .pro-menu-item.active button": {
+          color: `${colors.blueAccent[500]} !important`,
+        },
+        "& .pro-menu-item:hover button": {
+          color: `${colors.blueAccent[400]} !important`,
+        },
+        // Hamburger menu item (first item) - hover efekti kaldırıldı
+        "& .pro-menu-item:first-of-type": {
+          backgroundColor: "transparent !important",
+          "&:hover": {
+            backgroundColor: "transparent !important",
+            color: `${colors.grey[100]} !important`,
+          },
+          "& button": {
+            color: `${colors.grey[100]} !important`,
+            backgroundColor: "transparent !important",
+            "&:hover": {
+              color: `${colors.grey[100]} !important`,
+              backgroundColor: "transparent !important",
+            },
+          },
+          "& svg": {
+            color: `${colors.grey[100]} !important`,
+            fill: `${colors.grey[100]} !important`,
+          },
+          "&:hover svg": {
+            color: `${colors.grey[100]} !important`,
+            fill: `${colors.grey[100]} !important`,
+          },
+          "& .pro-icon-wrapper": {
+            backgroundColor: "transparent !important",
+            "& svg": {
+              color: `${colors.grey[100]} !important`,
+              fill: `${colors.grey[100]} !important`,
+            },
+          },
+          "&:hover .pro-icon-wrapper": {
+            backgroundColor: "transparent !important",
+            "& svg": {
+              color: `${colors.grey[100]} !important`,
+              fill: `${colors.grey[100]} !important`,
+            },
+          },
+          "& .pro-inner-item": {
+            color: `${colors.grey[100]} !important`,
+            "&:hover": {
+              color: `${colors.grey[100]} !important`,
+            },
+          },
         },
       }}
     >
-      <ProSidebar collapsed={isCollapsed}>
-        <Menu>
+      <ProSidebar 
+        collapsed={isCollapsed}
+        backgroundColor={sidebarBgColor}
+        rootStyles={{
+          backgroundColor: sidebarBgColor,
+          background: sidebarBgColor,
+        }}
+      >
+        <Menu
+          menuItemStyles={{
+            button: {
+              color: colors.grey[100],
+              backgroundColor: sidebarBgColor,
+              [`&.active`]: {
+                backgroundColor: isLightMode ? colors.primary[300] : colors.primary[400],
+                color: colors.blueAccent[500],
+              },
+              [`&:hover`]: {
+                backgroundColor: isLightMode ? colors.primary[300] : colors.primary[400],
+                color: colors.blueAccent[400],
+              },
+            },
+            icon: {
+              color: colors.grey[100],
+            },
+          }}
+        >
           {/* LOGO AND MENU ICON */}
           <MenuItem
             onClick={() => setIsCollapsed(!isCollapsed)}
-            icon={isCollapsed ? <MenuOutlinedIcon /> : undefined}
+            icon={
+              isCollapsed ? (
+                <MenuOutlinedIcon
+                  sx={{
+                    color: `${colors.grey[100]} !important`,
+                    fill: `${colors.grey[100]} !important`,
+                  }}
+                />
+              ) : undefined
+            }
             style={{
               margin: "10px 0 20px 0",
               color: colors.grey[100],
+              backgroundColor: sidebarBgColor,
+            }}
+            rootStyles={{
+              color: `${colors.grey[100]} !important`,
+              backgroundColor: "transparent !important",
+              "&:hover": {
+                backgroundColor: "transparent !important",
+                color: `${colors.grey[100]} !important`,
+              },
             }}
           >
             {!isCollapsed && (
@@ -133,7 +307,15 @@ const Sidebar = ({ locale }: { locale: string }) => {
                 <Typography variant="h3" color={colors.grey[100]}>
                   Artific Agent
                 </Typography>
-                <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
+                <IconButton 
+                  onClick={() => setIsCollapsed(!isCollapsed)}
+                  sx={{
+                    color: colors.grey[100],
+                    "&:hover": {
+                      backgroundColor: "transparent",
+                    },
+                  }}
+                >
                   <MenuOutlinedIcon />
                 </IconButton>
               </Box>
@@ -145,7 +327,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
             <Item
               title={t("sidebar.dashboard")}
               to={`/${locale}/dashboard`}
-              icon={<HomeOutlinedIcon />}
+              icon={<HomeOutlinedIcon sx={{ color: colors.grey[100] }} />}
               pathname={pathname}
             />
 
@@ -159,19 +341,19 @@ const Sidebar = ({ locale }: { locale: string }) => {
             <Item
               title={t("sidebar.manageTeam")}
               to={`/${locale}/experts`}
-              icon={<PeopleOutlinedIcon />}
+              icon={<PeopleOutlinedIcon sx={{ color: colors.grey[100] }} />}
               pathname={pathname}
             />
             <Item
               title={t("sidebar.customers")}
               to={`/${locale}/customers`}
-              icon={<ContactsOutlinedIcon />}
+              icon={<ContactsOutlinedIcon sx={{ color: colors.grey[100] }} />}
               pathname={pathname}
             />
             <Item
               title={t("sidebar.callLogs")}
               to={`/${locale}/calls`}
-              icon={<ReceiptOutlinedIcon />}
+              icon={<ReceiptOutlinedIcon sx={{ color: colors.grey[100] }} />}
               pathname={pathname}
             />
             <Typography
@@ -184,13 +366,13 @@ const Sidebar = ({ locale }: { locale: string }) => {
             <Item
               title={t("sidebar.calendar")}
               to={`/${locale}/calendar`}
-              icon={<CalendarTodayOutlinedIcon />}
+              icon={<CalendarTodayOutlinedIcon sx={{ color: colors.grey[100] }} />}
               pathname={pathname}
             />
             <Item
               title={t("sidebar.lineChart")}
               to={`/${locale}/charts`}
-              icon={<TimelineOutlinedIcon />}
+              icon={<TimelineOutlinedIcon sx={{ color: colors.grey[100] }} />}
               pathname={pathname}
             />
           </Box>

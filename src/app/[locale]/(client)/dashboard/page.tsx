@@ -9,6 +9,10 @@ import { useLocale } from "@/contexts/LocaleContext";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import LineChart from "@/features/charts/LineChart";
+import CallLogsPreview from "@/features/dashboard/CallLogsPreview";
+import { useCharts } from "@/hooks/use-charts";
+import { useCalls } from "@/hooks/use-calls";
 
 const transformStatsDataToStatBoxProps = (
   data: NonNullable<ReturnType<typeof useDashboardStats>["data"]>,
@@ -51,9 +55,11 @@ const transformStatsDataToStatBoxProps = (
 
 export default function DashboardPage() {
   const { data, loading, error } = useDashboardStats();
+  const { data: chartData, loading: chartLoading } = useCharts();
+  const { calls, loading: callsLoading } = useCalls();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
 
   if (loading) {
     return (
@@ -84,7 +90,32 @@ export default function DashboardPage() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      <StatsGrid stats={stats} />
+      {/* Stats Cards */}
+      <Box sx={{ mb: 4 }}>
+        <StatsGrid stats={stats} />
+      </Box>
+
+      {/* Line Chart and Call Logs Preview - Side by Side */}
+      <Box
+        sx={{
+          display: "flex",
+          gap: 3,
+          mb: 4,
+          flexDirection: { xs: "column", md: "row" },
+        }}
+      >
+        <Box sx={{ flex: { xs: 1, md: 2 } }}>
+          <LineChart data={chartData} loading={chartLoading} />
+        </Box>
+        <Box sx={{ flex: { xs: 1, md: 1 }, minWidth: { md: "400px" } }}>
+          <CallLogsPreview
+            calls={calls}
+            loading={callsLoading}
+            locale={locale}
+          />
+        </Box>
+      </Box>
+
     </Box>
   );
 }

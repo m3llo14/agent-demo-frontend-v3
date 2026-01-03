@@ -42,6 +42,10 @@ export default {
     last30Days: "Son 30 gün",
     awaitingAction: "İşlem bekliyor",
     registeredCustomers: "Kayıtlı Müşteriler",
+    recentCalls: "Son Çağrılar",
+    calendar: "Takvim",
+    viewAll: "Tümünü Gör",
+    noRecentCalls: "Henüz çağrı kaydı yok",
   },
   experts: {
     title: "Uzmanlar",

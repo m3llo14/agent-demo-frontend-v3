@@ -1,3 +1,86 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Global styles for react-pro-sidebar override */
+.pro-sidebar {
+  background-color: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg) !important;
+}
+
+.pro-sidebar-inner {
+  background-color: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg) !important;
+}
+
+.pro-sidebar > div {
+  background-color: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg) !important;
+}
+
+.pro-menu {
+  background-color: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg) !important;
+}
+
+.pro-menu-item {
+  background-color: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg) !important;
+}
+
+.pro-inner-item {
+  background-color: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg) !important;
+}
+
+.pro-icon-wrapper {
+  background-color: var(--sidebar-bg) !important;
+  background: var(--sidebar-bg) !important;
+}
+
+/* Icon color fixes for collapsed state - Light mode için özel */
+/* NOT: Bu genel kurallar sadece normal state için, hover state'ler aşağıda */
+.pro-icon-wrapper svg,
+.pro-icon-wrapper path {
+  color: var(--sidebar-icon-color, #141414) !important;
+  fill: var(--sidebar-icon-color, #141414) !important;
+}
+
+.pro-menu-item.active .pro-icon-wrapper svg,
+.pro-menu-item.active .pro-icon-wrapper path,
+.pro-menu-item.active svg,
+.pro-menu-item.active path,
+.pro-inner-item.active svg,
+.pro-inner-item.active path {
+  color: var(--sidebar-active-icon-color, #6870fa) !important;
+  fill: var(--sidebar-active-icon-color, #6870fa) !important;
+}
+
+/* Normal menu items hover state - diğer item'lar için (first-of-type hariç) */
+.pro-menu-item:hover:not(:first-of-type) .pro-icon-wrapper svg,
+.pro-menu-item:hover:not(:first-of-type) .pro-icon-wrapper path {
+  color: var(--sidebar-hover-icon-color, #868dfb) !important;
+  fill: var(--sidebar-hover-icon-color, #868dfb) !important;
+}
+
+/* Hamburger menu item (first menu item) - hover efekti kaldırıldı */
+.pro-menu-item:first-of-type:hover {
+  background-color: transparent !important;
+}
+
+.pro-menu-item:first-of-type:hover button {
+  color: var(--sidebar-icon-color) !important;
+  background-color: transparent !important;
+}
+
+.pro-menu-item:first-of-type:hover .pro-icon-wrapper svg,
+.pro-menu-item:first-of-type:hover .pro-icon-wrapper path,
+.pro-menu-item:first-of-type:hover svg,
+.pro-menu-item:first-of-type:hover path {
+  color: var(--sidebar-icon-color) !important;
+  fill: var(--sidebar-icon-color) !important;
+}
+
+.pro-menu-item:first-of-type:hover .pro-inner-item {
+  color: var(--sidebar-icon-color) !important;
+}
