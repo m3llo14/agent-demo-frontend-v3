@@ -87,7 +87,25 @@ export default {
     },
   },
   customers: {
-    title: "Customers",
+    title: "Hairdresser & Beauty Center Customers",
+    breadcrumbs: {
+      home: "Home",
+      customers: "Hairdresser & Beauty Center Customers",
+    },
+    searchPlaceholder: "Search by customer name...",
+    noCustomers: "No customers found.",
+    appointments: "Appointments",
+    lastAppointment: "Last Appointment",
+    callCount: "Call Count",
+    totalSpending: "Total Spending",
+    appointmentCount: "Appointment Count",
+    lastAppointments: "Last Appointments",
+    minutes: "min",
+    status: {
+      pending: "Pending",
+      completed: "Completed",
+      cancelled: "Cancelled",
+    },
   },
   calls: {
     title: "Call Logs",

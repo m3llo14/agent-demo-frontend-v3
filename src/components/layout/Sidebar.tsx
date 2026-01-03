@@ -72,8 +72,26 @@ const Sidebar = ({ locale }: { locale: string }) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { t } = useLocale();
+
+  // Hydration hatasını önlemek için client-side mount kontrolü
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Server-side render sırasında boş render döndür
+  if (!mounted) {
+    return (
+      <Box
+        sx={{
+          width: "250px",
+          minHeight: "100vh",
+        }}
+      />
+    );
+  }
 
   return (
     <Box

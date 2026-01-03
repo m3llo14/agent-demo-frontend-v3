@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Box, IconButton, useTheme, Menu, MenuItem, Typography, Select, FormControl } from "@mui/material";
 import { useContext } from "react";
 import { ColorModeContext, tokens } from "../../themes/colors";
@@ -18,6 +18,7 @@ import LanguageIcon from "@mui/icons-material/Language";
 
 const Topbar = ({ locale }: { locale: string }) => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [mounted, setMounted] = useState(false);
   const open = Boolean(anchorEl);
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
@@ -27,6 +28,11 @@ const Topbar = ({ locale }: { locale: string }) => {
   };
   const { logout, user } = useAuth();
   const { locale: currentLocale, t, changeLocale } = useLocale();
+
+  // Hydration hatasını önlemek için client-side mount kontrolü
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -40,6 +46,16 @@ const Topbar = ({ locale }: { locale: string }) => {
     handleClose();
     logout();
   };
+
+  // Server-side render sırasında boş render döndür
+  if (!mounted) {
+    return (
+      <Box display="flex" justifyContent="space-between" p={2}>
+        <Box display="flex" sx={{ flex: 1 }} />
+        <Box display="flex" />
+      </Box>
+    );
+  }
 
   return (
     <Box display="flex" justifyContent="space-between" p={2}>

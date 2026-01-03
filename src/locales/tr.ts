@@ -87,7 +87,25 @@ export default {
     },
   },
   customers: {
-    title: "Müşteriler",
+    title: "Kuaför & Güzellik Merkezi Müşterileri",
+    breadcrumbs: {
+      home: "Home",
+      customers: "Kuaför & Güzellik Merkezi Müşterileri",
+    },
+    searchPlaceholder: "Müşteri adına göre ara...",
+    noCustomers: "Müşteri bulunamadı.",
+    appointments: "Randevu",
+    lastAppointment: "Son Randevu",
+    callCount: "Arama Sayısı",
+    totalSpending: "Toplam Harcama",
+    appointmentCount: "Randevu Sayısı",
+    lastAppointments: "Son Randevular",
+    minutes: "dk",
+    status: {
+      pending: "Beklemede",
+      completed: "Tamamlandı",
+      cancelled: "İptal Edildi",
+    },
   },
   calls: {
     title: "Arama Kayıtları",

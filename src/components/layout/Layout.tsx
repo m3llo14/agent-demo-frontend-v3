@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { ThemeProvider, CssBaseline, Box, Theme } from "@mui/material";
 import Sidebar from "./Sidebar";
 import Navbar from "./Navbar";
@@ -16,6 +17,22 @@ export default function Layout({
     Theme,
     { toggleColorMode: () => void }
   ];
+  const [mounted, setMounted] = useState(false);
+
+  // Hydration hatasını önlemek için client-side mount kontrolü
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Server-side render sırasında boş render döndür
+  if (!mounted) {
+    return (
+      <Box sx={{ display: "flex", minHeight: "100vh" }}>
+        <Box sx={{ width: "250px" }} />
+        <Box sx={{ flex: 1 }} />
+      </Box>
+    );
+  }
 
   return (
     <ColorModeContext.Provider value={colorMode}>
