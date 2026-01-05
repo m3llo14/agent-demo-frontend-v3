@@ -17,6 +17,7 @@ import {
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import { CalendarAppointment } from "@/types/calendar";
+import { getStatusColor } from "@/lib/utils";
 import CloseIcon from "@mui/icons-material/Close";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
 import PersonIcon from "@mui/icons-material/Person";
@@ -52,33 +53,17 @@ export default function AppointmentDayModal({
   const { t } = useLocale();
   const isLightMode = theme.palette.mode === "light";
 
-  // Tarih formatlama fonksiyonu
-  const formatDate = (date: Date): string => {
+  // Tarih formatlama fonksiyonu (Date objesi için)
+  const formatDateLocal = (date: Date): string => {
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}.${month}.${year}`;
   };
 
-  // Durum rengi fonksiyonu
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return isLightMode ? "#FF9800" : "#FFB74D";
-      case "confirmed":
-        return isLightMode ? "#4CAF50" : "#81C784";
-      case "cancelled":
-        return isLightMode ? "#F44336" : "#E57373";
-      case "completed":
-        return isLightMode ? "#2196F3" : "#64B5F6";
-      default:
-        return isLightMode ? "#757575" : "#BDBDBD";
-    }
-  };
-
   // Durum etiketi fonksiyonu
   const getStatusLabel = (status: string) => {
-    return t(`calendar.status.${status}`);
+    return t(`common.status.${status}`);
   };
 
   // Randevuları saate göre sırala
@@ -128,7 +113,7 @@ export default function AppointmentDayModal({
               color: isLightMode ? colors.grey[300] : colors.grey[300],
             }}
           >
-            {formatDate(date)} • {sortedAppointments.length}{" "}
+            {formatDateLocal(date)} • {sortedAppointments.length}{" "}
             {t("calendar.dayModal.appointmentCount")}
           </Typography>
         </Box>
@@ -208,7 +193,7 @@ export default function AppointmentDayModal({
                     label={getStatusLabel(appointment.status)}
                     size="small"
                     sx={{
-                      backgroundColor: getStatusColor(appointment.status),
+                      backgroundColor: getStatusColor(appointment.status, isLightMode),
                       color: "#ffffff",
                       fontWeight: "bold",
                       fontSize: "11px",
@@ -242,7 +227,7 @@ export default function AppointmentDayModal({
                           mb: 0.25,
                         }}
                       >
-                        {t("calendar.dayModal.customer")}
+                        {t("common.appointmentFields.customer")}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -285,7 +270,7 @@ export default function AppointmentDayModal({
                           mb: 0.25,
                         }}
                       >
-                        {t("calendar.dayModal.service")}
+                        {t("common.appointmentFields.service")}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -315,7 +300,7 @@ export default function AppointmentDayModal({
                           mb: 0.25,
                         }}
                       >
-                        {t("calendar.dayModal.staff")}
+                        {t("common.appointmentFields.staff")}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -349,7 +334,7 @@ export default function AppointmentDayModal({
                           color: isLightMode ? colors.grey[300] : colors.grey[300],
                         }}
                       >
-                        {appointment.duration} {t("calendar.minutes")}
+                        {appointment.duration} {t("common.minutes")}
                       </Typography>
                     </Box>
                     <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
@@ -382,7 +367,7 @@ export default function AppointmentDayModal({
                           mb: 0.5,
                         }}
                       >
-                        {t("calendar.dayModal.notes")}
+                        {t("common.appointmentFields.notes")}
                       </Typography>
                       <Typography
                         variant="body2"

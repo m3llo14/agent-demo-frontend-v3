@@ -141,7 +141,7 @@ export default function CallDetailModal({
   // Action type label
   const getActionLabel = (actionType?: string) => {
     if (!actionType) return t("calls.detailModal.assistantAction");
-    return t(`calls.detailModal.actions.${actionType}`);
+    return t(`calls.sharedActions.${actionType}`);
   };
 
   if (!call) return null;

@@ -117,8 +117,8 @@ const ExpertsTable = ({ experts, onEdit, onDelete }: ExpertsTableProps) => {
               </TableCell>
               <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
                 {expert.gender === "Kadın"
-                  ? t("experts.gender.female")
-                  : t("experts.gender.male")}
+                  ? t("common.gender.female")
+                  : t("common.gender.male")}
               </TableCell>
               <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
                 {expert.experience} {t("experts.year")}

@@ -14,6 +14,7 @@ import { useLocale } from "@/contexts/LocaleContext";
 import PhoneIcon from "@mui/icons-material/Phone";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { formatDateWithMonth, formatDuration } from "@/lib/utils";
 
 interface CallLogCardProps {
   call: CallLog;
@@ -31,53 +32,8 @@ export default function CallLogCard({
 }: CallLogCardProps) {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const isLightMode = theme.palette.mode === "light";
-
-  // Tarih formatlama
-  const formatDate = (dateString: string): string => {
-    try {
-      const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, "0");
-      const month = (date.getMonth() + 1).toString().padStart(2, "0");
-      const year = date.getFullYear();
-      return `${day} ${getMonthName(date.getMonth())} ${year}`;
-    } catch {
-      return dateString;
-    }
-  };
-
-  // Ay ismi alma
-  const getMonthName = (monthIndex: number): string => {
-    const months = [
-      t("calendar.months.january"),
-      t("calendar.months.february"),
-      t("calendar.months.march"),
-      t("calendar.months.april"),
-      t("calendar.months.may"),
-      t("calendar.months.june"),
-      t("calendar.months.july"),
-      t("calendar.months.august"),
-      t("calendar.months.september"),
-      t("calendar.months.october"),
-      t("calendar.months.november"),
-      t("calendar.months.december"),
-    ];
-    return months[monthIndex] || "";
-  };
-
-  // Süre formatlama
-  const formatDuration = (minutes: number): string => {
-    if (minutes >= 60) {
-      const hours = Math.floor(minutes / 60);
-      const mins = minutes % 60;
-      if (mins === 0) {
-        return `${hours}:00`;
-      }
-      return `${hours}:${mins.toString().padStart(2, "0")}`;
-    }
-    return `0:${minutes.toString().padStart(2, "0")}`;
-  };
 
   return (
     <Card
@@ -168,7 +124,7 @@ export default function CallLogCard({
               color: isLightMode ? colors.grey[300] : colors.grey[300],
             }}
           >
-            {formatDate(call.date)} {call.time}
+            {formatDateWithMonth(call.date, t, locale)} {call.time}
           </Typography>
         </Box>
 

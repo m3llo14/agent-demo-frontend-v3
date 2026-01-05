@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Expert, ExpertsResponse } from "@/types/experts";
+import { MOCK_DELAYS } from "@/lib/constants";
 
 // TODO: API endpoint'i eklendiğinde bu fonksiyon gerçek API çağrısı yapacak
 const fetchExperts = async (): Promise<ExpertsResponse> => {
@@ -31,7 +32,7 @@ const fetchExperts = async (): Promise<ExpertsResponse> => {
         ],
         total: 2,
       });
-    }, 300);
+    }, MOCK_DELAYS.MEDIUM);
   });
 };
 
@@ -57,18 +58,18 @@ export const useExperts = () => {
     loadExperts();
   }, []);
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     try {
       setLoading(true);
+      setError(null);
       const response = await fetchExperts();
       setData(response.experts);
-      setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load experts");
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // TODO: Database entegrasyonu ile gerçek API çağrısı yapılacak
   const deleteExpert = async (expertId: string) => {

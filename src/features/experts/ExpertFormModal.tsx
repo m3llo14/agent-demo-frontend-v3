@@ -238,13 +238,13 @@ export default function ExpertFormModal({
                   value="Kadın"
                   sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}
                 >
-                  {t("experts.form.female")}
+                  {t("common.gender.female")}
                 </MenuItem>
                 <MenuItem
                   value="Erkek"
                   sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}
                 >
-                  {t("experts.form.male")}
+                  {t("common.gender.male")}
                 </MenuItem>
               </TextField>
             </Box>

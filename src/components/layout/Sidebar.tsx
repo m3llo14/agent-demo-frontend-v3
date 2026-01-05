@@ -369,12 +369,6 @@ const Sidebar = ({ locale }: { locale: string }) => {
               icon={<CalendarTodayOutlinedIcon sx={{ color: colors.grey[100] }} />}
               pathname={pathname}
             />
-            <Item
-              title={t("sidebar.lineChart")}
-              to={`/${locale}/charts`}
-              icon={<TimelineOutlinedIcon sx={{ color: colors.grey[100] }} />}
-              pathname={pathname}
-            />
           </Box>
         </Menu>
       </ProSidebar>

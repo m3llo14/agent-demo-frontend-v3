@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { MonthlyAppointmentData, AppointmentsChartResponse, ChartFilters } from "@/types/charts";
 import apiClient from "@/lib/api-client";
+import { MOCK_DELAYS } from "@/lib/constants";
 
 /**
  * Charts hook
@@ -84,7 +85,7 @@ export function useCharts() {
           data: mockData,
           total: mockData.reduce((sum, item) => sum + item.count, 0),
         });
-      }, 300);
+      }, MOCK_DELAYS.MEDIUM);
     });
   }, []);
 

@@ -20,6 +20,7 @@ import {
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import { MonthlyAppointmentData } from "@/types/charts";
+import { getMonthName } from "@/lib/utils";
 
 interface LineChartProps {
   data: MonthlyAppointmentData[];
@@ -37,47 +38,10 @@ export default function LineChart({ data, loading }: LineChartProps) {
   const { t, locale } = useLocale();
   const isLightMode = theme.palette.mode === "light";
 
-  // Ay isimlerini locale'e göre dönüştür
-  const getMonthName = (monthIndex: number): string => {
-    if (locale === "tr") {
-      const months = [
-        t("calendar.months.january"),
-        t("calendar.months.february"),
-        t("calendar.months.march"),
-        t("calendar.months.april"),
-        t("calendar.months.may"),
-        t("calendar.months.june"),
-        t("calendar.months.july"),
-        t("calendar.months.august"),
-        t("calendar.months.september"),
-        t("calendar.months.october"),
-        t("calendar.months.november"),
-        t("calendar.months.december"),
-      ];
-      return months[monthIndex] || "";
-    } else {
-      const months = [
-        t("calendar.months.january"),
-        t("calendar.months.february"),
-        t("calendar.months.march"),
-        t("calendar.months.april"),
-        t("calendar.months.may"),
-        t("calendar.months.june"),
-        t("calendar.months.july"),
-        t("calendar.months.august"),
-        t("calendar.months.september"),
-        t("calendar.months.october"),
-        t("calendar.months.november"),
-        t("calendar.months.december"),
-      ];
-      return months[monthIndex] || "";
-    }
-  };
-
   // Data'yı ay isimleriyle doldur
   const chartData = data.map((item) => ({
     ...item,
-    month: item.month || getMonthName(item.monthIndex),
+    month: item.month || getMonthName(item.monthIndex, t, locale),
   }));
 
   // Chart için renkler

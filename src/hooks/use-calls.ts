@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { CallLog, CallLogsResponse, CallLogsFilters } from "@/types/calls";
 import apiClient from "@/lib/api-client";
+import { MOCK_DELAYS } from "@/lib/constants";
 
 /**
  * Call logs hook
@@ -122,7 +123,7 @@ export function useCalls() {
           calls: mockCalls,
           total: mockCalls.length,
         });
-      }, 300);
+      }, MOCK_DELAYS.MEDIUM);
     });
   }, []);
 

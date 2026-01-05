@@ -21,70 +21,23 @@ import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined
 import ContentCutOutlinedIcon from "@mui/icons-material/ContentCutOutlined";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
+import {
+  formatDate,
+  formatDateTime,
+  getCustomerAvatarColor,
+  getStatusColor,
+} from "@/lib/utils";
 
 interface CustomerCardProps {
   customer: Customer;
   t: (key: string) => string;
 }
 
-// Avatar renkleri için fonksiyon
-const getAvatarColor = (index: number) => {
-  const colors = [
-    { bg: "#FFF9C4", text: "#F57F17" }, // Yellow
-    { bg: "#FFE0B2", text: "#E65100" }, // Orange
-    { bg: "#C5E1A5", text: "#33691E" }, // Green
-    { bg: "#BBDEFB", text: "#0D47A1" }, // Blue
-    { bg: "#F8BBD0", text: "#880E4F" }, // Pink
-    { bg: "#D1C4E9", text: "#4A148C" }, // Purple
-  ];
-  return colors[index % colors.length];
-};
-
-// Durum renkleri
-const getStatusColor = (status: AppointmentStatus, theme: any) => {
-  const isLight = theme.palette.mode === "light";
-  switch (status) {
-    case "pending":
-      return isLight ? "#FF9800" : "#FFB74D";
-    case "completed":
-      return isLight ? "#4CAF50" : "#81C784";
-    case "cancelled":
-      return isLight ? "#F44336" : "#E57373";
-    default:
-      return isLight ? "#757575" : "#BDBDBD";
-  }
-};
-
-const formatDate = (dateString: string | null, t: (key: string) => string): string => {
-  if (!dateString) return "-";
-  try {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}`;
-  } catch {
-    return "-";
-  }
-};
-
-const formatDateTime = (dateString: string, timeString: string): string => {
-  try {
-    const date = new Date(dateString);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = (date.getMonth() + 1).toString().padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}.${month}.${year} - ${timeString}`;
-  } catch {
-    return `${dateString} - ${timeString}`;
-  }
-};
-
 const CustomerCard = ({ customer, t }: CustomerCardProps) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isLightMode = theme.palette.mode === "light";
-  const avatarColor = getAvatarColor(parseInt(customer.id) || 0);
+  const avatarColor = getCustomerAvatarColor(parseInt(customer.id) || 0);
   const initials = `${customer.firstName[0]}${customer.lastName[0]}`.toUpperCase();
 
   return (
@@ -397,7 +350,7 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
                       color: isLightMode ? colors.grey[100] : colors.grey[100],
                     }}
                   >
-                    {appointment.duration} {t("customers.minutes")}
+                    {appointment.duration} {t("common.minutes")}
                   </Typography>
                 </Box>
 
@@ -437,10 +390,10 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
               </Box>
 
               <Chip
-                label={t(`customers.status.${appointment.status}`)}
+                label={t(`common.status.${appointment.status}`)}
                 size="small"
                 sx={{
-                  backgroundColor: getStatusColor(appointment.status, theme),
+                  backgroundColor: getStatusColor(appointment.status, isLightMode),
                   color: "#ffffff",
                   fontWeight: 600,
                   textTransform: "capitalize",

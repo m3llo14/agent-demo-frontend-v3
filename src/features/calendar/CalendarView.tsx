@@ -16,6 +16,7 @@ import {
 import { tokens } from "@/themes/colors";
 import { CalendarAppointment, CalendarViewMode, CalendarDateInfo } from "@/types/calendar";
 import { useLocale } from "@/contexts/LocaleContext";
+import { getStatusColor } from "@/lib/utils";
 import AddIcon from "@mui/icons-material/Add";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
@@ -80,25 +81,10 @@ const CalendarView = ({
     t("calendar.weekdays.sunday"),
   ];
 
-  // Get status color
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return isLightMode ? "#FF9800" : "#FFB74D";
-      case "confirmed":
-        return isLightMode ? "#4CAF50" : "#81C784";
-      case "cancelled":
-        return isLightMode ? "#F44336" : "#E57373";
-      case "completed":
-        return isLightMode ? "#2196F3" : "#64B5F6";
-      default:
-        return isLightMode ? "#757575" : "#BDBDBD";
-    }
-  };
 
   // Get status label
   const getStatusLabel = (status: string) => {
-    return t(`calendar.status.${status}`);
+    return t(`common.status.${status}`);
   };
 
   // Generate calendar grid
@@ -312,7 +298,7 @@ const CalendarView = ({
                           e.stopPropagation();
                         }}
                         sx={{
-                          backgroundColor: getStatusColor(appointment.status),
+                          backgroundColor: getStatusColor(appointment.status, isLightMode),
                           color: "#ffffff",
                           p: 0.5,
                           borderRadius: "2px",
@@ -427,7 +413,7 @@ const CalendarView = ({
                       color: isLightMode ? colors.grey[300] : colors.grey[300],
                     }}
                   >
-                    {appointment.service} • {appointment.duration} {t("calendar.minutes")} •{" "}
+                    {appointment.service} • {appointment.duration} {t("common.minutes")} •{" "}
                     {appointment.staffName}
                   </Typography>
                 </Box>

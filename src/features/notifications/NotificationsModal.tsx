@@ -18,6 +18,14 @@ import { Notification } from "@/types/notifications";
 import CloseIcon from "@mui/icons-material/Close";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { useNotifications } from "@/hooks/use-notifications";
+import {
+  formatDate,
+  getInitials,
+  getAvatarColor,
+  getStatusText,
+  getStatusColor,
+  getTimeAgo,
+} from "@/lib/utils";
 
 interface NotificationsModalProps {
   open: boolean;
@@ -39,87 +47,9 @@ export default function NotificationsModal({
   const { t, locale } = useLocale();
   const { notifications, loading, deleteNotification } = useNotifications();
 
-  // Tarih formatla
-  const formatDate = (dateString: string): string => {
-    const date = new Date(dateString);
-    const day = String(date.getDate()).padStart(2, "0");
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const year = date.getFullYear();
-    return `${day}.${month}.${year}`;
-  };
-
   // Saat formatla
   const formatTime = (timeString: string): string => {
     return timeString;
-  };
-
-  // Ne kadar zaman önce hesapla
-  const getTimeAgo = (dateString: string): string => {
-    const now = new Date();
-    const date = new Date(dateString);
-    const diffMs = now.getTime() - date.getTime();
-    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
-    const diffDays = Math.floor(diffHours / 24);
-
-    if (diffDays > 0) {
-      const dayWord = locale === "tr" ? "gün" : diffDays > 1 ? "days" : "day";
-      return `${t("notifications.daysAgo")} ${diffDays} ${dayWord} ${t("notifications.timeAgoSuffix")}`;
-    } else if (diffHours > 0) {
-      const hourWord = locale === "tr" ? "saat" : diffHours > 1 ? "hours" : "hour";
-      return `${t("notifications.hoursAgo")} ${diffHours} ${hourWord} ${t("notifications.timeAgoSuffix")}`;
-    } else {
-      const diffMinutes = Math.floor(diffMs / (1000 * 60));
-      const minuteWord = locale === "tr" ? "dakika" : diffMinutes > 1 ? "minutes" : "minute";
-      return `${t("notifications.minutesAgo")} ${diffMinutes} ${minuteWord} ${t("notifications.timeAgoSuffix")}`;
-    }
-  };
-
-  // Avatar rengi hesapla
-  const getAvatarColor = (name: string) => {
-    const colors = [
-      { bg: "#e3f2fd", text: "#1976d2" },
-      { bg: "#f3e5f5", text: "#7b1fa2" },
-      { bg: "#e8f5e9", text: "#388e3c" },
-      { bg: "#fff3e0", text: "#f57c00" },
-      { bg: "#fce4ec", text: "#c2185b" },
-    ];
-    const index = name.charCodeAt(0) % colors.length;
-    return colors[index];
-  };
-
-  // İsim baş harflerini al
-  const getInitials = (firstName: string, lastName: string): string => {
-    const first = firstName.charAt(0).toUpperCase();
-    const last = lastName.charAt(0).toUpperCase();
-    return `${first}${last}`;
-  };
-
-  // Status çevirisi
-  const getStatusText = (status: string): string => {
-    switch (status) {
-      case "pending":
-        return t("notifications.status.pending");
-      case "confirmed":
-        return t("notifications.status.confirmed");
-      case "cancelled":
-        return t("notifications.status.cancelled");
-      default:
-        return status;
-    }
-  };
-
-  // Status rengi
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case "pending":
-        return "#ff9800";
-      case "confirmed":
-        return "#4caf50";
-      case "cancelled":
-        return "#f44336";
-      default:
-        return colors.grey[500];
-    }
   };
 
   const handleDelete = async (notificationId: string) => {
@@ -208,7 +138,7 @@ export default function NotificationsModal({
                 notification.customerFirstName,
                 notification.customerLastName
               );
-              const statusColor = getStatusColor(notification.status);
+              const statusColor = getStatusColor(notification.status, isLightMode);
 
               return (
                 <Box
@@ -296,7 +226,7 @@ export default function NotificationsModal({
                           color: isLightMode ? colors.grey[400] : colors.grey[400],
                         }}
                       >
-                        {getStatusText(notification.status)}
+                        {getStatusText(notification.status, t)}
                       </Typography>
                       <Typography
                         variant="body2"
@@ -312,7 +242,7 @@ export default function NotificationsModal({
                           color: isLightMode ? colors.grey[400] : colors.grey[400],
                         }}
                       >
-                        {getTimeAgo(notification.createdAt)}
+                        {getTimeAgo(notification.createdAt, t, locale)}
                       </Typography>
                     </Box>
                   </Box>

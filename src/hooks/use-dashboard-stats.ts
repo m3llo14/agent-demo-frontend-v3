@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { MOCK_DELAYS } from "@/lib/constants";
 
 export interface DashboardStatsData {
   totalAppointments: number;
@@ -20,7 +21,7 @@ const fetchDashboardStats = async (): Promise<DashboardStatsData> => {
         pendingAppointments: 2,
         customers: 1710,
       });
-    }, 100);
+    }, MOCK_DELAYS.SHORT);
   });
 };
 

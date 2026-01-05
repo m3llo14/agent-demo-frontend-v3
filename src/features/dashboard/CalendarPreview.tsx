@@ -12,6 +12,7 @@ import {
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import { CalendarAppointment } from "@/types/calendar";
+import { getStatusColor } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import CalendarTodayIcon from "@mui/icons-material/CalendarToday";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
@@ -69,21 +70,6 @@ export default function CalendarPreview({
     t("calendar.weekdays.sunday"),
   ];
 
-  // Get status color
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "pending":
-        return isLightMode ? "#FF9800" : "#FFB74D";
-      case "confirmed":
-        return isLightMode ? "#4CAF50" : "#81C784";
-      case "cancelled":
-        return isLightMode ? "#F44336" : "#E57373";
-      case "completed":
-        return isLightMode ? "#2196F3" : "#64B5F6";
-      default:
-        return isLightMode ? "#757575" : "#BDBDBD";
-    }
-  };
 
   // Generate calendar grid
   const calendarGrid = useMemo(() => {

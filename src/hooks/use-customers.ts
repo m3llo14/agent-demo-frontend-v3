@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { Customer, CustomersData } from "@/types/customers";
+import { MOCK_DELAYS } from "@/lib/constants";
 
 export function useCustomers() {
   const [data, setData] = useState<CustomersData | null>(null);
@@ -65,7 +66,7 @@ export function useCustomers() {
           customers: filteredCustomers,
           total: filteredCustomers.length,
         });
-      }, 500);
+      }, MOCK_DELAYS.LONG);
     });
   };
 
@@ -99,26 +100,25 @@ export function useCustomers() {
     }
   };
 
+  const refetch = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const result = await fetchCustomers();
+      setData(result);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Failed to fetch customers");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return {
     data,
     loading,
     error,
     searchCustomers,
-    refetch: () => {
-      const loadCustomers = async () => {
-        try {
-          setLoading(true);
-          setError(null);
-          const result = await fetchCustomers();
-          setData(result);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : "Failed to fetch customers");
-        } finally {
-          setLoading(false);
-        }
-      };
-      loadCustomers();
-    },
+    refetch,
   };
 }
 

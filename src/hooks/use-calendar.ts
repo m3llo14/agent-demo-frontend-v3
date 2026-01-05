@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { CalendarAppointment, CalendarAppointmentsResponse, CalendarFilters } from "@/types/calendar";
 import apiClient from "@/lib/api-client";
+import { MOCK_DELAYS } from "@/lib/constants";
 
 /**
  * Calendar appointments hook
@@ -207,7 +208,7 @@ export function useCalendar() {
           appointments: mockAppointments,
           total: mockAppointments.length,
         });
-      }, 300);
+      }, MOCK_DELAYS.MEDIUM);
     });
   }, []);
 
