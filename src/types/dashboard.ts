@@ -8,6 +8,8 @@ export interface DashboardStat {
 }
 
 export interface DashboardStatsData {
-  stats: DashboardStat[];
+  totalAppointments: number;
+  pendingAppointments: number;
+  customers: number;
 }
 

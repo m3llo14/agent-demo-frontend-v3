@@ -1,29 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { MOCK_DELAYS } from "@/lib/constants";
-
-export interface DashboardStatsData {
-  totalAppointments: number;
-  pendingAppointments: number;
-  customers: number;
-}
-
-// TODO: API endpoint'i eklendiğinde bu fonksiyon gerçek API çağrısı yapacak
-const fetchDashboardStats = async (): Promise<DashboardStatsData> => {
-  // Simüle edilmiş API çağrısı
-  // Gerçek implementasyonda: return await fetch('/api/dashboard/stats').then(res => res.json());
-  
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      resolve({
-        totalAppointments: 8,
-        pendingAppointments: 2,
-        customers: 1710,
-      });
-    }, MOCK_DELAYS.SHORT);
-  });
-};
+import { DashboardStatsData } from "@/types/dashboard";
+import { dashboardService } from "@/features/dashboard/services/dashboard.service";
 
 export const useDashboardStats = () => {
   const [data, setData] = useState<DashboardStatsData | null>(null);
@@ -34,7 +13,7 @@ export const useDashboardStats = () => {
     const loadStats = async () => {
       try {
         setLoading(true);
-        const statsData = await fetchDashboardStats();
+        const statsData = await dashboardService.getStats();
         setData(statsData);
         setError(null);
       } catch (err) {

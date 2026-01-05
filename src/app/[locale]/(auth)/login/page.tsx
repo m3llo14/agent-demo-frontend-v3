@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext, useEffect } from "react";
 import {
   Box,
   Card,
@@ -10,20 +10,32 @@ import {
   Typography,
   Alert,
   useTheme,
+  IconButton,
 } from "@mui/material";
-import { tokens } from "@/themes/colors";
+import { ColorModeContext, tokens } from "@/themes/colors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useLocale } from "@/contexts/LocaleContext";
+import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
+import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const { login } = useAuth();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { t } = useLocale();
+  const colorMode = useContext(ColorModeContext) as {
+    toggleColorMode: () => void;
+  };
+
+  // Hydration hatasını önlemek için client-side mount kontrolü
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -38,6 +50,43 @@ export default function LoginPage() {
       setLoading(false);
     }
   };
+
+  const isDarkMode = theme.palette.mode === "dark";
+  const textFieldStyles = {
+    "& .MuiOutlinedInput-root": {
+      backgroundColor: isDarkMode ? colors.primary[500] : "#ffffff",
+      "& fieldset": {
+        borderColor: isDarkMode ? colors.grey[700] : colors.grey[300],
+      },
+      "&:hover fieldset": {
+        borderColor: isDarkMode ? colors.grey[100] : colors.blueAccent[500],
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: colors.blueAccent[500],
+      },
+    },
+    "& .MuiInputLabel-root": {
+      color: isDarkMode ? colors.grey[300] : colors.grey[600],
+    },
+    "& .MuiInputBase-input": {
+      color: isDarkMode ? colors.grey[100] : colors.grey[900],
+    },
+  };
+
+  // Server-side render sırasında minimal render döndür
+  if (!mounted) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          backgroundColor: "#f5f5f5",
+        }}
+      />
+    );
+  }
 
   return (
     <Box
@@ -57,7 +106,7 @@ export default function LoginPage() {
           maxWidth: 400,
           width: "100%",
           p: 3,
-          backgroundColor: colors.primary[400],
+          backgroundColor: isDarkMode ? colors.primary[400] : "#ffffff",
         }}
       >
         <CardContent>
@@ -65,13 +114,21 @@ export default function LoginPage() {
             variant="h4"
             component="h1"
             gutterBottom
-            sx={{ color: colors.grey[100], textAlign: "center", mb: 3 }}
+            sx={{
+              color: isDarkMode ? colors.grey[100] : colors.grey[900],
+              textAlign: "center",
+              mb: 3,
+            }}
           >
             {t("auth.title")}
           </Typography>
           <Typography
             variant="body2"
-            sx={{ color: colors.grey[300], textAlign: "center", mb: 3 }}
+            sx={{
+              color: isDarkMode ? colors.grey[300] : colors.grey[600],
+              textAlign: "center",
+              mb: 3,
+            }}
           >
             {t("auth.subtitle")}
           </Typography>
@@ -90,24 +147,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              sx={{
-                mb: 2,
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: colors.primary[500],
-                  "& fieldset": {
-                    borderColor: colors.grey[700],
-                  },
-                  "&:hover fieldset": {
-                    borderColor: colors.grey[100],
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: colors.grey[300],
-                },
-                "& .MuiInputBase-input": {
-                  color: colors.grey[100],
-                },
-              }}
+              sx={{ mb: 2, ...textFieldStyles }}
             />
             <TextField
               fullWidth
@@ -116,24 +156,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              sx={{
-                mb: 3,
-                "& .MuiOutlinedInput-root": {
-                  backgroundColor: colors.primary[500],
-                  "& fieldset": {
-                    borderColor: colors.grey[700],
-                  },
-                  "&:hover fieldset": {
-                    borderColor: colors.grey[100],
-                  },
-                },
-                "& .MuiInputLabel-root": {
-                  color: colors.grey[300],
-                },
-                "& .MuiInputBase-input": {
-                  color: colors.grey[100],
-                },
-              }}
+              sx={{ mb: 3, ...textFieldStyles }}
             />
             <Button
               type="submit"
@@ -154,10 +177,19 @@ export default function LoginPage() {
           </form>
 
           <Box sx={{ mt: 3, textAlign: "center" }}>
-            <Typography variant="body2" sx={{ color: colors.grey[400], mb: 1 }}>
+            <Typography
+              variant="body2"
+              sx={{
+                color: isDarkMode ? colors.grey[400] : colors.grey[600],
+                mb: 1,
+              }}
+            >
               {t("auth.testAccounts")}:
             </Typography>
-            <Typography variant="caption" sx={{ color: colors.grey[500] }}>
+            <Typography
+              variant="caption"
+              sx={{ color: isDarkMode ? colors.grey[500] : colors.grey[700] }}
+            >
               {t("auth.adminAccount")}
               <br />
               {t("auth.merchantAccount")}
@@ -165,6 +197,26 @@ export default function LoginPage() {
           </Box>
         </CardContent>
       </Card>
+      <IconButton
+        onClick={colorMode.toggleColorMode}
+        sx={{
+          position: "fixed",
+          bottom: 24,
+          right: 24,
+          backgroundColor: isDarkMode ? colors.primary[500] : "#ffffff",
+          color: isDarkMode ? colors.grey[100] : colors.grey[900],
+          boxShadow: isDarkMode
+            ? "0px 2px 8px rgba(0,0,0,0.32)"
+            : "0px 2px 8px rgba(0,0,0,0.15)",
+          "&:hover": {
+            backgroundColor: isDarkMode
+              ? colors.primary[600]
+              : colors.grey[100],
+          },
+        }}
+      >
+        {isDarkMode ? <DarkModeOutlinedIcon /> : <LightModeOutlinedIcon />}
+      </IconButton>
     </Box>
   );
 }

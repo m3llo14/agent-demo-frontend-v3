@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
+import { authService } from "@/services/auth.service";
 
 type UserRole = "admin" | "merchant" | null;
 
@@ -20,44 +21,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
 
   useEffect(() => {
-    // Sayfa yüklendiğinde localStorage'dan kullanıcı bilgisini kontrol et
-    const savedUser = localStorage.getItem("user");
-    if (savedUser) {
-      setUser(JSON.parse(savedUser));
-    }
-    setIsLoading(false);
+    // Sayfa yüklendiğinde mevcut kullanıcı bilgisini kontrol et
+    const loadUser = async () => {
+      try {
+        const currentUser = await authService.getCurrentUser();
+        setUser(currentUser);
+      } catch {
+        // Kullanıcı bulunamadı, localStorage'dan kontrol et
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          try {
+            setUser(JSON.parse(savedUser));
+          } catch {
+            // Invalid data
+          }
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUser();
   }, []);
 
   const login = async (email: string, password: string) => {
-    // Email'e göre role belirleme
-    let role: UserRole = null;
+    const response = await authService.login({ email, password });
+    const userData = {
+      email: response.user.email,
+      role: response.user.role,
+    };
     
-    // Admin email'leri (örnek - gerçek uygulamada backend'den gelmeli)
-    if (email.includes("@admin.") || email === "admin@example.com") {
-      role = "admin";
-    } 
-    // Merchant email'leri
-    else if (email.includes("@merchant.") || email.includes("@example.com")) {
-      role = "merchant";
-    }
-
-    if (!role) {
-      throw new Error("Invalid email or password");
-    }
-
-    const userData = { email, role };
+    // Token'ı localStorage'a kaydet
+    localStorage.setItem("user", JSON.stringify({ ...userData, token: response.user.token }));
+    
     setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
 
     // Role'e göre yönlendirme
-    if (role === "admin") {
+    if (response.user.role === "admin") {
       router.push("/admin/tr/dashboard");
     } else {
       router.push("/tr/dashboard");
     }
   };
 
-  const logout = () => {
+  const logout = async () => {
+    await authService.logout();
     setUser(null);
     localStorage.removeItem("user");
     router.push("/tr/login");
