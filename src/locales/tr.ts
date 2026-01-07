@@ -419,10 +419,10 @@ export default {
       },
       detail: {
         title: "Şirket Detayları",
-        companyInfo: "Şirket Bilgileri",
-        subscription: "Abonelik Bilgisi",
+        companyInfo: "ŞİRKET BİLGİLERİ",
+        subscription: "ABONELİK BİLGİSİ",
         addSubscription: "Abonelik Ekle",
-        addAdmin: "Admin Ekle",
+        addAdmin: "ADMİN EKLE",
         info: {
           name: "Şirket Adı",
           email: "E-posta",

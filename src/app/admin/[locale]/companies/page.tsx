@@ -7,35 +7,34 @@ import {
   TextField,
   Button,
   useTheme,
-  Breadcrumbs,
-  Link as MuiLink,
 } from "@mui/material";
 import SearchIcon from "@mui/icons-material/Search";
-import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import AddIcon from "@mui/icons-material/Add";
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
-import { useCustomers } from "@/hooks/use-customers";
-import CustomerCard from "@/features/customers/CustomerCard";
+import { useCompanies } from "@/hooks/use-companies";
+import CompaniesTable from "@/features/admin/CompaniesTable";
+import { useRouter } from "next/navigation";
 import LoadingState from "@/components/common/LoadingState";
 import ErrorState from "@/components/common/ErrorState";
 import EmptyState from "@/components/common/EmptyState";
 
-export default function CustomersPage() {
-  const { data, loading, error, searchCustomers } = useCustomers();
+export default function CompaniesPage() {
+  const { data, loading, error, searchCompanies } = useCompanies();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { t, locale } = useLocale();
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [mounted, setMounted] = useState(false);
   const isLightMode = theme.palette.mode === "light";
 
-  // Hydration hatasını önlemek için client-side mount kontrolü
   useEffect(() => {
     setMounted(true);
   }, []);
 
   const handleSearch = () => {
-    searchCustomers(searchQuery);
+    searchCompanies(searchQuery);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -44,7 +43,10 @@ export default function CustomersPage() {
     }
   };
 
-  // Server-side render sırasında boş render döndür
+  const handleCreateCompany = () => {
+    router.push(`/admin/${locale}/companies/new`);
+  };
+
   if (!mounted) {
     return (
       <Box sx={{ width: "100%" }}>
@@ -56,54 +58,52 @@ export default function CustomersPage() {
 
   return (
     <Box sx={{ width: "100%" }}>
-      {/* Breadcrumbs */}
-      <Breadcrumbs
-        aria-label="breadcrumb"
+      {/* Header */}
+      <Box
         sx={{
-          mb: 2,
-          "& .MuiBreadcrumbs-ol": {
-            flexWrap: "nowrap",
-          },
-          "& .MuiBreadcrumbs-li": {
-            color: isLightMode ? colors.grey[400] : colors.grey[400],
-          },
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-start",
+          mb: 4,
         }}
       >
-        <MuiLink
-          href={`/${locale}/dashboard`}
+        <Box>
+          <Typography
+            variant="h3"
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              mb: 1,
+            }}
+          >
+            {t("admin.companies.title")}
+          </Typography>
+          <Typography
+            variant="body1"
+            sx={{
+              color: isLightMode ? colors.grey[300] : colors.grey[300],
+            }}
+          >
+            {t("admin.companies.subtitle")}
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
+          startIcon={<AddIcon />}
+          onClick={handleCreateCompany}
           sx={{
-            display: "flex",
-            alignItems: "center",
-            color: isLightMode ? colors.grey[400] : colors.grey[400],
-            textDecoration: "none",
+            backgroundColor: colors.blueAccent[500],
+            color: "#ffffff",
             "&:hover": {
-              textDecoration: "underline",
+              backgroundColor: colors.blueAccent[600],
             },
+            px: 3,
+            py: 1.5,
           }}
         >
-          <HomeOutlinedIcon sx={{ mr: 0.5, fontSize: 20 }} />
-          {t("customers.breadcrumbs.home")}
-        </MuiLink>
-        <Typography
-          sx={{
-            color: isLightMode ? colors.grey[100] : colors.grey[100],
-          }}
-        >
-          {t("customers.breadcrumbs.customers")}
-        </Typography>
-      </Breadcrumbs>
-
-      {/* Page Title */}
-      <Typography
-        variant="h3"
-        sx={{
-          color: isLightMode ? colors.grey[100] : colors.grey[100],
-          fontWeight: "bold",
-          mb: 3,
-        }}
-      >
-        {t("customers.title")}
-      </Typography>
+          {t("admin.companies.addNew")}
+        </Button>
+      </Box>
 
       {/* Search Section */}
       <Box
@@ -116,7 +116,7 @@ export default function CustomersPage() {
       >
         <TextField
           fullWidth
-          placeholder={t("customers.searchPlaceholder")}
+          placeholder={t("admin.companies.searchPlaceholder")}
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyPress={handleKeyPress}
@@ -177,20 +177,17 @@ export default function CustomersPage() {
       {/* Error State */}
       {error && <ErrorState error={error} />}
 
-      {/* Customers List */}
+      {/* Companies Table */}
       {!loading && !error && data && (
         <>
-          {data.customers.length > 0 ? (
-            <Box>
-              {data.customers.map((customer) => (
-                <CustomerCard key={customer.id} customer={customer} t={t} />
-              ))}
-            </Box>
+          {data.companies.length > 0 ? (
+            <CompaniesTable companies={data.companies} />
           ) : (
-            <EmptyState message={t("customers.noCustomers")} />
+            <EmptyState message={t("admin.companies.noCompanies")} />
           )}
         </>
       )}
     </Box>
   );
 }
+

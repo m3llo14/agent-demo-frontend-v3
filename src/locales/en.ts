@@ -277,6 +277,10 @@ export default {
       endCall: "End Call",
       details: "Details",
     },
+    sharedActions: {
+      availabilityStatus: "Availability Status",
+      createAppointment: "Create Appointment",
+    },
     noCalls: "No call records found.",
     duration: "Duration",
     date: "Date",
@@ -415,10 +419,10 @@ export default {
       },
       detail: {
         title: "Company Details",
-        companyInfo: "Company Information",
-        subscription: "Subscription Information",
+        companyInfo: "COMPANY INFORMATION",
+        subscription: "SUBSCRIPTION INFORMATION",
         addSubscription: "Add Subscription",
-        addAdmin: "Add Admin",
+        addAdmin: "ADD ADMIN",
         info: {
           name: "Company Name",
           email: "Email",

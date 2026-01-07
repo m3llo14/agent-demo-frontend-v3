@@ -16,6 +16,8 @@ import {
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import { Expert } from "@/types/experts";
+import { getTextFieldStyles, getSelectFieldStyles } from "@/lib/form-styles";
+import { FormValidator } from "@/lib/validation";
 
 interface ExpertFormModalProps {
   open: boolean;
@@ -67,21 +69,17 @@ export default function ExpertFormModal({
   }, [expert, mode, open]);
 
   const validate = (): boolean => {
-    const newErrors: Record<string, string> = {};
+    const validator = new FormValidator();
+    
+    validator
+      .required("name", formData.name, t("experts.form.validation.nameRequired"))
+      .required("surname", formData.surname, t("experts.form.validation.surnameRequired"))
+      .numberRange("age", formData.age, 18, 100, t("experts.form.validation.ageInvalid"))
+      .numberRange("experience", formData.experience, 0, 50, t("experts.form.validation.experienceInvalid"));
 
-    if (!formData.name.trim()) newErrors.name = t("experts.form.validation.nameRequired");
-    if (!formData.surname.trim()) newErrors.surname = t("experts.form.validation.surnameRequired");
-
-    const age = parseInt(formData.age);
-    if (!formData.age || isNaN(age) || age < 18 || age > 100)
-      newErrors.age = t("experts.form.validation.ageInvalid");
-
-    const experience = parseInt(formData.experience);
-    if (!formData.experience || isNaN(experience) || experience < 0 || experience > 50)
-      newErrors.experience = t("experts.form.validation.experienceInvalid");
-
+    const newErrors = validator.getErrors();
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return validator.isValid();
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -115,48 +113,9 @@ export default function ExpertFormModal({
   };
 
   const isLightMode = theme.palette.mode === "light";
-
-  // Light theme'e uygun TextField stilleri - DRY prensibi
-  const textFieldStyles = {
-    "& .MuiOutlinedInput-root": {
-      backgroundColor: isLightMode ? "#ffffff" : colors.primary[500],
-      "& fieldset": {
-        borderColor: isLightMode ? colors.grey[700] : colors.grey[700],
-      },
-      "&:hover fieldset": {
-        borderColor: isLightMode ? colors.grey[600] : colors.grey[100],
-      },
-      "&.Mui-focused fieldset": {
-        borderColor: colors.blueAccent[500],
-      },
-    },
-    "& .MuiInputLabel-root": {
-      color: isLightMode ? colors.grey[300] : colors.grey[500],
-    },
-    "& .MuiInputLabel-shrink": {
-      transform: "translate(14px, -9px) scale(0.75)",
-      color: isLightMode ? colors.grey[300] : colors.grey[300],
-      backgroundColor: isLightMode ? "#ffffff" : "transparent",
-    },
-    "& .MuiInputLabel-root.Mui-focused": {
-      color: colors.blueAccent[500],
-    },
-    "& .MuiInputBase-input": {
-      color: isLightMode ? colors.grey[100] : colors.grey[100],
-      padding: "14px 12px",
-      lineHeight: "1.4",
-    },
-    "& .MuiFormHelperText-root": {
-      color: colors.redAccent[500],
-    },
-  };
-
-  const selectFieldStyles = {
-    ...textFieldStyles,
-    "& .MuiSvgIcon-root": {
-      color: isLightMode ? colors.grey[300] : colors.grey[300],
-    },
-  };
+  const formStylesOptions = { theme, colors, isLightMode };
+  const textFieldStyles = getTextFieldStyles(formStylesOptions);
+  const selectFieldStyles = getSelectFieldStyles(formStylesOptions);
 
   return (
     <Dialog

@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, CircularProgress, Alert, Typography, useTheme } from "@mui/material";
+import { Box, Typography, useTheme } from "@mui/material";
 import StatsGrid from "@/components/dashboard/StatsGrid";
 import { useAdminDashboardStats } from "@/hooks/use-admin-dashboard-stats";
 import { StatBoxProps } from "@/features/dashboard/StatBox";
@@ -9,6 +9,8 @@ import { useLocale } from "@/contexts/LocaleContext";
 import BusinessOutlinedIcon from "@mui/icons-material/BusinessOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
+import LoadingState from "@/components/common/LoadingState";
+import ErrorState from "@/components/common/ErrorState";
 
 const transformAdminStatsToStatBoxProps = (
   data: NonNullable<ReturnType<typeof useAdminDashboardStats>["data"]>,
@@ -56,24 +58,11 @@ export default function AdminDashboard() {
   const { t } = useLocale();
 
   if (loading) {
-    return (
-      <Box
-        display="flex"
-        justifyContent="center"
-        alignItems="center"
-        minHeight="400px"
-      >
-        <CircularProgress />
-      </Box>
-    );
+    return <LoadingState />;
   }
 
   if (error) {
-    return (
-      <Box p={2}>
-        <Alert severity="error">{error}</Alert>
-      </Box>
-    );
+    return <ErrorState error={error} />;
   }
 
   if (!data) {
