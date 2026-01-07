@@ -12,19 +12,29 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useCompany } from "@/contexts/CompanyContext";
 import { useExperts } from "@/hooks/use-experts";
 import ExpertsTable from "@/features/experts/ExpertsTable";
 import ExpertFormModal from "@/features/experts/ExpertFormModal";
 import { Expert } from "@/types/experts";
+import { useRouter } from "next/navigation";
 
 export default function ExpertsPage() {
   const { data, loading, error, deleteExpert, updateExpert, createExpert } = useExperts();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
+  const { industryConfig } = useCompany();
+  const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
+
+  // Eğer bu sektörde experts özelliği yoksa, dashboard'a yönlendir
+  if (industryConfig && !industryConfig.features.experts) {
+    router.push(`/${locale}/dashboard`);
+    return null;
+  }
 
   const handleAddNew = () => {
     setSelectedExpert(null);

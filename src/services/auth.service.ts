@@ -1,4 +1,5 @@
 import apiClient from "@/lib/api-client";
+import { Company, IndustryType } from "@/types/industry";
 
 export interface LoginRequest {
   email: string;
@@ -11,11 +12,13 @@ export interface LoginResponse {
     role: "admin" | "merchant";
     token: string;
   };
+  company: Company;
 }
 
 export interface User {
   email: string;
   role: "admin" | "merchant";
+  company?: Company;
 }
 
 /**
@@ -36,14 +39,32 @@ export const authService = {
     return new Promise((resolve, reject) => {
       setTimeout(() => {
         let role: "admin" | "merchant" | null = null;
+        let industry: IndustryType = "beauty_salon";
         
         // Admin email'leri (örnek - gerçek uygulamada backend'den gelmeli)
         if (credentials.email.includes("@admin.") || credentials.email === "admin@example.com") {
           role = "admin";
         } 
-        // Merchant email'leri
+        // Merchant email'leri - Email'e göre sektör belirleme (mock)
         else if (credentials.email.includes("@merchant.") || credentials.email.includes("@example.com")) {
           role = "merchant";
+          
+          // Email'e göre sektör belirleme (mock - gerçekte backend'den gelecek)
+          if (credentials.email.includes("@hotel.") || credentials.email.includes("hotel@")) {
+            industry = "hotel";
+          } else if (credentials.email.includes("@cafe.") || credentials.email.includes("cafe@")) {
+            industry = "cafe";
+          } else if (credentials.email.includes("@restaurant.") || credentials.email.includes("restaurant@")) {
+            industry = "restaurant";
+          } else if (credentials.email.includes("@spa.") || credentials.email.includes("spa@")) {
+            industry = "spa";
+          } else if (credentials.email.includes("@fitness.") || credentials.email.includes("fitness@")) {
+            industry = "fitness";
+          } else if (credentials.email.includes("@clinic.") || credentials.email.includes("clinic@")) {
+            industry = "clinic";
+          } else {
+            industry = "beauty_salon"; // Default
+          }
         }
 
         if (!role) {
@@ -51,12 +72,21 @@ export const authService = {
           return;
         }
 
+        // Mock company bilgisi
+        const company: Company = {
+          id: "company-" + Date.now(),
+          name: `${industry.charAt(0).toUpperCase() + industry.slice(1)} Company`,
+          email: credentials.email,
+          industry,
+        };
+
         resolve({
           user: {
             email: credentials.email,
             role,
             token: "mock-token-" + Date.now(),
           },
+          company,
         });
       }, 300);
     });
@@ -91,13 +121,26 @@ export const authService = {
         }
         
         const savedUser = localStorage.getItem("user");
+        const savedCompany = localStorage.getItem("company");
+        
         if (savedUser) {
           try {
             const userData = JSON.parse(savedUser);
-            resolve({
+            const user: User = {
               email: userData.email,
               role: userData.role,
-            });
+            };
+            
+            // Company bilgisini de ekle
+            if (savedCompany) {
+              try {
+                user.company = JSON.parse(savedCompany);
+              } catch {
+                // Company parse hatası - devam et
+              }
+            }
+            
+            resolve(user);
           } catch {
             reject(new Error("Invalid user data"));
           }

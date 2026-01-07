@@ -8,6 +8,8 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { tokens } from "../../themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useCompany } from "@/contexts/CompanyContext";
+import { iconMap } from "@/config/industries";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
@@ -99,6 +101,7 @@ const Sidebar = ({ locale }: { locale: string }) => {
   const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const { t } = useLocale();
+  const { industryConfig } = useCompany();
 
   // Hydration hatasını önlemek için client-side mount kontrolü
   useEffect(() => {
@@ -331,44 +334,82 @@ const Sidebar = ({ locale }: { locale: string }) => {
               pathname={pathname}
             />
 
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              {t("sidebar.management")}
-            </Typography>
-            <Item
-              title={t("sidebar.manageTeam")}
-              to={`/${locale}/experts`}
-              icon={<PeopleOutlinedIcon sx={{ color: colors.grey[100] }} />}
-              pathname={pathname}
-            />
-            <Item
-              title={t("sidebar.customers")}
-              to={`/${locale}/customers`}
-              icon={<ContactsOutlinedIcon sx={{ color: colors.grey[100] }} />}
-              pathname={pathname}
-            />
-            <Item
-              title={t("sidebar.callLogs")}
-              to={`/${locale}/calls`}
-              icon={<ReceiptOutlinedIcon sx={{ color: colors.grey[100] }} />}
-              pathname={pathname}
-            />
-            <Typography
-              variant="h6"
-              color={colors.grey[300]}
-              sx={{ m: "15px 0 5px 20px" }}
-            >
-              {t("sidebar.pages")}
-            </Typography>
-            <Item
-              title={t("sidebar.calendar")}
-              to={`/${locale}/calendar`}
-              icon={<CalendarTodayOutlinedIcon sx={{ color: colors.grey[100] }} />}
-              pathname={pathname}
-            />
+            {/* Sektöre göre dinamik menü öğeleri */}
+            {industryConfig && industryConfig.menuItems.length > 0 && (
+              <>
+                <Typography
+                  variant="h6"
+                  color={colors.grey[300]}
+                  sx={{ m: "15px 0 5px 20px" }}
+                >
+                  {t("sidebar.management")}
+                </Typography>
+                {industryConfig.menuItems
+                  .filter((item) => {
+                    // Feature kontrolü - eğer feature varsa ve aktif değilse gösterilmez
+                    if (item.feature) {
+                      return industryConfig.features[item.feature];
+                    }
+                    return true;
+                  })
+                  .map((menuItem) => {
+                    const IconComponent = iconMap[menuItem.icon] || PeopleOutlinedIcon;
+                    return (
+                      <Item
+                        key={menuItem.key}
+                        title={t(menuItem.labelKey)}
+                        to={`/${locale}${menuItem.route}`}
+                        icon={<IconComponent sx={{ color: colors.grey[100] }} />}
+                        pathname={pathname}
+                      />
+                    );
+                  })}
+              </>
+            )}
+
+            {/* Fallback: Eğer industry config yoksa default menü göster */}
+            {!industryConfig && (
+              <>
+                <Typography
+                  variant="h6"
+                  color={colors.grey[300]}
+                  sx={{ m: "15px 0 5px 20px" }}
+                >
+                  {t("sidebar.management")}
+                </Typography>
+                <Item
+                  title={t("sidebar.manageTeam")}
+                  to={`/${locale}/experts`}
+                  icon={<PeopleOutlinedIcon sx={{ color: colors.grey[100] }} />}
+                  pathname={pathname}
+                />
+                <Item
+                  title={t("sidebar.customers")}
+                  to={`/${locale}/customers`}
+                  icon={<ContactsOutlinedIcon sx={{ color: colors.grey[100] }} />}
+                  pathname={pathname}
+                />
+                <Item
+                  title={t("sidebar.callLogs")}
+                  to={`/${locale}/calls`}
+                  icon={<ReceiptOutlinedIcon sx={{ color: colors.grey[100] }} />}
+                  pathname={pathname}
+                />
+                <Typography
+                  variant="h6"
+                  color={colors.grey[300]}
+                  sx={{ m: "15px 0 5px 20px" }}
+                >
+                  {t("sidebar.pages")}
+                </Typography>
+                <Item
+                  title={t("sidebar.calendar")}
+                  to={`/${locale}/calendar`}
+                  icon={<CalendarTodayOutlinedIcon sx={{ color: colors.grey[100] }} />}
+                  pathname={pathname}
+                />
+              </>
+            )}
           </Box>
         </Menu>
       </ProSidebar>

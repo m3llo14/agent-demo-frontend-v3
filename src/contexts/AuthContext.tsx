@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { authService } from "@/services/auth.service";
+import { useCompany } from "./CompanyContext";
 
 type UserRole = "admin" | "merchant" | null;
 
@@ -15,10 +16,11 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+function AuthProviderInner({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<{ email: string; role: UserRole } | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const { setCompany } = useCompany();
 
   useEffect(() => {
     // Sayfa yüklendiğinde mevcut kullanıcı bilgisini kontrol et
@@ -26,12 +28,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       try {
         const currentUser = await authService.getCurrentUser();
         setUser(currentUser);
+        
+        // Company bilgisini de set et
+        if (currentUser.company) {
+          setCompany(currentUser.company);
+        }
       } catch {
         // Kullanıcı bulunamadı, localStorage'dan kontrol et
         const savedUser = localStorage.getItem("user");
         if (savedUser) {
           try {
-            setUser(JSON.parse(savedUser));
+            const userData = JSON.parse(savedUser);
+            setUser({
+              email: userData.email,
+              role: userData.role,
+            });
           } catch {
             // Invalid data
           }
@@ -42,7 +53,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     loadUser();
-  }, []);
+  }, [setCompany]);
 
   const login = async (email: string, password: string) => {
     const response = await authService.login({ email, password });
@@ -53,6 +64,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     // Token'ı localStorage'a kaydet
     localStorage.setItem("user", JSON.stringify({ ...userData, token: response.user.token }));
+    
+    // Company bilgisini CompanyContext'e set et
+    setCompany(response.company);
     
     setUser(userData);
 
@@ -67,7 +81,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = async () => {
     await authService.logout();
     setUser(null);
+    setCompany(null);
     localStorage.removeItem("user");
+    localStorage.removeItem("company");
     router.push("/tr/login");
   };
 
@@ -76,6 +92,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       {children}
     </AuthContext.Provider>
   );
+}
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  return <AuthProviderInner>{children}</AuthProviderInner>;
 }
 
 export function useAuth() {

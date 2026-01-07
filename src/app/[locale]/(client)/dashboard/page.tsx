@@ -6,6 +6,7 @@ import { useDashboardStats } from "@/hooks/use-dashboard-stats";
 import { StatBoxProps } from "@/features/dashboard/StatBox";
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
+import { useCompany } from "@/contexts/CompanyContext";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
@@ -17,11 +18,13 @@ import { useCalls } from "@/hooks/use-calls";
 const transformStatsDataToStatBoxProps = (
   data: NonNullable<ReturnType<typeof useDashboardStats>["data"]>,
   colors: ReturnType<typeof tokens>,
-  t: (key: string) => string
+  t: (key: string) => string,
+  appointmentLabel: string,
+  customerLabel: string
 ): StatBoxProps[] => {
   return [
     {
-      label: t("dashboard.totalAppointments"),
+      label: `${t("dashboard.total")} ${appointmentLabel}`,
       value: data.totalAppointments,
       description: t("dashboard.last30Days"),
       icon: (
@@ -31,7 +34,7 @@ const transformStatsDataToStatBoxProps = (
       ),
     },
     {
-      label: t("dashboard.pendingAppointments"),
+      label: `${t("dashboard.pending")} ${appointmentLabel}`,
       value: data.pendingAppointments,
       description: t("dashboard.awaitingAction"),
       icon: (
@@ -41,9 +44,9 @@ const transformStatsDataToStatBoxProps = (
       ),
     },
     {
-      label: t("dashboard.customers"),
+      label: customerLabel,
       value: data.customers,
-      description: t("dashboard.registeredCustomers"),
+      description: t("dashboard.registered"),
       icon: (
         <PeopleOutlinedIcon
           sx={{ fontSize: "26px", color: colors.blueAccent[500] }}
@@ -60,6 +63,15 @@ export default function DashboardPage() {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { t, locale } = useLocale();
+  const { industryConfig } = useCompany();
+
+  // Sektöre göre terminoloji belirleme - Translation key'lerini kullan
+  const appointmentLabel = industryConfig?.fieldMappings.appointment 
+    ? t(industryConfig.fieldMappings.appointment) 
+    : t("dashboard.appointments");
+  const customerLabel = industryConfig?.fieldMappings.customer 
+    ? t(industryConfig.fieldMappings.customer) 
+    : t("dashboard.customers");
 
   if (loading) {
     return (
@@ -86,7 +98,7 @@ export default function DashboardPage() {
     return null;
   }
 
-  const stats = transformStatsDataToStatBoxProps(data, colors, t);
+  const stats = transformStatsDataToStatBoxProps(data, colors, t, appointmentLabel, customerLabel);
 
   return (
     <Box sx={{ width: "100%" }}>
