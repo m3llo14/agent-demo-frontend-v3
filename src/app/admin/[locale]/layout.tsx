@@ -1,4 +1,4 @@
-import Layout from "@/components/layout/Layout";
+import AdminLayout from "@/components/layout/AdminLayout";
 
 export default async function AdminLocaleLayout({
   children,
@@ -8,5 +8,5 @@ export default async function AdminLocaleLayout({
   params: Promise<{ locale: string }>;
 }) {
   const { locale } = await params;
-  return <Layout locale={locale}>{children}</Layout>;
+  return <AdminLayout locale={locale}>{children}</AdminLayout>;
 }

@@ -13,3 +13,9 @@ export interface DashboardStatsData {
   customers: number;
 }
 
+export interface AdminDashboardStatsData {
+  totalCompanies: number;
+  totalAppointments: number;
+  totalCustomers: number;
+}
+
