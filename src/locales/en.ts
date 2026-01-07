@@ -259,6 +259,7 @@ export default {
     callCount: "Call Count",
     totalSpending: "Total Spending",
     appointmentCount: "Appointment Count",
+    last: "Last",
     lastAppointments: "Last Appointments",
   },
   calls: {

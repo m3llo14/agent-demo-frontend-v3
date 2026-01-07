@@ -19,8 +19,12 @@ import PhoneIcon from "@mui/icons-material/Phone";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import ContentCutOutlinedIcon from "@mui/icons-material/ContentCutOutlined";
+import HotelIcon from "@mui/icons-material/Hotel";
+import RestaurantIcon from "@mui/icons-material/Restaurant";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
+import { useCompany } from "@/contexts/CompanyContext";
 import {
   formatDate,
   formatDateTime,
@@ -37,8 +41,28 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const isLightMode = theme.palette.mode === "light";
+  const { industryConfig } = useCompany();
   const avatarColor = getCustomerAvatarColor(parseInt(customer.id) || 0);
   const initials = `${customer.firstName[0]}${customer.lastName[0]}`.toUpperCase();
+
+  // Sektöre göre service icon'u belirle
+  const getServiceIcon = () => {
+    if (!industryConfig) return ContentCutOutlinedIcon;
+
+    switch (industryConfig.type) {
+      case "hotel":
+        return HotelIcon;
+      case "cafe":
+      case "restaurant":
+        return RestaurantIcon;
+      case "travel_agency":
+        return FlightTakeoffIcon;
+      default:
+        return ContentCutOutlinedIcon; // beauty_salon, spa, fitness, clinic
+    }
+  };
+
+  const ServiceIcon = getServiceIcon();
 
   return (
     <Card
@@ -121,7 +145,10 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
             },
           }}
         >
-          {customer.appointmentCount} {t("customers.appointments")}
+          {customer.appointmentCount}{" "}
+          {industryConfig?.fieldMappings.appointment
+            ? t(industryConfig.fieldMappings.appointment)
+            : t("customers.appointments")}
         </Button>
       </Box>
 
@@ -285,7 +312,9 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
               mb: 2,
             }}
           >
-            {t("customers.lastAppointments")}
+            {industryConfig?.fieldMappings.appointment
+              ? `${t("customers.last")} ${t(industryConfig.fieldMappings.appointment)}`
+              : t("customers.lastAppointments")}
           </Typography>
           {customer.appointments.map((appointment) => (
             <Box
@@ -321,7 +350,7 @@ const CustomerCard = ({ customer, t }: CustomerCardProps) => {
                 </Box>
 
                 <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-                  <ContentCutOutlinedIcon
+                  <ServiceIcon
                     sx={{
                       fontSize: 16,
                       color: isLightMode ? colors.grey[400] : colors.grey[400],

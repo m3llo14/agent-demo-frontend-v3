@@ -259,6 +259,7 @@ export default {
     callCount: "Arama Sayısı",
     totalSpending: "Toplam Harcama",
     appointmentCount: "Randevu Sayısı",
+    last: "Son",
     lastAppointments: "Son Randevular",
   },
   calls: {
