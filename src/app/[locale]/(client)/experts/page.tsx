@@ -13,64 +13,113 @@ import AddIcon from "@mui/icons-material/Add";
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCompany } from "@/contexts/CompanyContext";
-import { useExperts } from "@/hooks/use-experts";
-import ExpertsTable from "@/features/experts/ExpertsTable";
-import ExpertFormModal from "@/features/experts/ExpertFormModal";
-import { Expert } from "@/types/experts";
+import { useResources } from "@/hooks/use-resources";
+import ResourcesTable from "@/features/experts/ResourcesTable";
+import ResourceFormModal from "@/features/experts/ResourceFormModal";
+import { Resource } from "@/types/resources";
 import { useRouter } from "next/navigation";
 
 export default function ExpertsPage() {
-  const { data, loading, error, deleteExpert, updateExpert, createExpert } = useExperts();
+  const { data, loading, error, deleteResource, updateResource, createResource } = useResources();
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const { t, locale } = useLocale();
   const { industryConfig } = useCompany();
   const router = useRouter();
   const [modalOpen, setModalOpen] = useState(false);
-  const [selectedExpert, setSelectedExpert] = useState<Expert | null>(null);
+  const [selectedResource, setSelectedResource] = useState<Resource | null>(null);
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
 
-  // Eğer bu sektörde experts özelliği yoksa, dashboard'a yönlendir
-  if (industryConfig && !industryConfig.features.experts) {
-    router.push(`/${locale}/dashboard`);
-    return null;
+  // Eğer bu sektörde ilgili özellik yoksa, dashboard'a yönlendir
+  if (industryConfig) {
+    const hasFeature =
+      industryConfig.features.experts ||
+      industryConfig.features.rooms ||
+      industryConfig.features.tables;
+    if (!hasFeature) {
+      router.push(`/${locale}/dashboard`);
+      return null;
+    }
   }
 
+  // Sektöre göre dinamik başlık ve buton metinleri
+  const getPageTitle = () => {
+    if (industryConfig?.type === "hotel") return t("rooms.title");
+    if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
+      return t("tables.title");
+    return t("experts.title");
+  };
+
+  const getPageSubtitle = () => {
+    if (industryConfig?.type === "hotel") return t("rooms.subtitle");
+    if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
+      return t("tables.subtitle");
+    return t("experts.subtitle");
+  };
+
+  const getAddButtonText = () => {
+    if (industryConfig?.type === "hotel") return t("rooms.addNew");
+    if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
+      return t("tables.addNew");
+    return t("experts.addNew");
+  };
+
+  const getNoDataText = () => {
+    if (industryConfig?.type === "hotel") return t("rooms.noRooms");
+    if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
+      return t("tables.noTables");
+    return t("experts.noExperts");
+  };
+
+  const getDeleteConfirmText = () => {
+    if (industryConfig?.type === "hotel") return t("rooms.form.deleteConfirm");
+    if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
+      return t("tables.form.deleteConfirm");
+    return t("experts.form.deleteConfirm");
+  };
+
+  const getDeleteErrorText = () => {
+    if (industryConfig?.type === "hotel") return t("rooms.form.deleteError");
+    if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
+      return t("tables.form.deleteError");
+    return t("experts.form.deleteError");
+  };
+
   const handleAddNew = () => {
-    setSelectedExpert(null);
+    setSelectedResource(null);
     setModalMode("create");
     setModalOpen(true);
   };
 
-  const handleEdit = (expert: Expert) => {
-    setSelectedExpert(expert);
+  const handleEdit = (resource: Resource) => {
+    setSelectedResource(resource);
     setModalMode("edit");
     setModalOpen(true);
   };
 
   const handleModalClose = () => {
     setModalOpen(false);
-    setSelectedExpert(null);
+    setSelectedResource(null);
   };
 
-  const handleModalSubmit = async (expert: Omit<Expert, "id"> | Expert) => {
+  const handleModalSubmit = async (resource: Omit<Resource, "id"> | Resource) => {
     try {
       if (modalMode === "create") {
-        await createExpert(expert as Omit<Expert, "id">);
+        await createResource(resource as Omit<Resource, "id">);
       } else {
-        await updateExpert(expert as Expert);
+        await updateResource(resource as Resource);
       }
     } catch (err) {
       throw err; // Modal içinde handle edilecek
     }
   };
 
-  const handleDelete = async (expertId: string) => {
-    if (window.confirm(t("experts.form.deleteConfirm"))) {
+  const handleDelete = async (resourceId: string) => {
+    if (window.confirm(getDeleteConfirmText())) {
       try {
-        await deleteExpert(expertId);
+        await deleteResource(resourceId);
       } catch (err) {
-        alert(err instanceof Error ? err.message : t("experts.form.deleteError"));
+        alert(err instanceof Error ? err.message : getDeleteErrorText());
       }
     }
   };
@@ -116,7 +165,7 @@ export default function ExpertsPage() {
               mb: 1,
             }}
           >
-            {t("experts.title")}
+            {getPageTitle()}
           </Typography>
           <Typography
             variant="body1"
@@ -124,7 +173,7 @@ export default function ExpertsPage() {
               color: theme.palette.mode === "light" ? colors.grey[300] : colors.grey[300],
             }}
           >
-            {t("experts.subtitle")}
+            {getPageSubtitle()}
           </Typography>
         </Box>
         <Button
@@ -141,14 +190,14 @@ export default function ExpertsPage() {
             py: 1.5,
           }}
         >
-          {t("experts.addNew")}
+          {getAddButtonText()}
         </Button>
       </Box>
 
       {/* Table */}
       {data.length > 0 ? (
-        <ExpertsTable
-          experts={data}
+        <ResourcesTable
+          resources={data}
           onEdit={handleEdit}
           onDelete={handleDelete}
         />
@@ -169,17 +218,17 @@ export default function ExpertsPage() {
               color: theme.palette.mode === "light" ? colors.grey[300] : colors.grey[300],
             }}
           >
-            {t("experts.noExperts")}
+            {getNoDataText()}
           </Typography>
         </Box>
       )}
 
       {/* Form Modal */}
-      <ExpertFormModal
+      <ResourceFormModal
         open={modalOpen}
         onClose={handleModalClose}
         onSubmit={handleModalSubmit}
-        expert={selectedExpert}
+        resource={selectedResource}
         mode={modalMode}
       />
     </Box>

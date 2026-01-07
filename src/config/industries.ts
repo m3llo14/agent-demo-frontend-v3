@@ -92,7 +92,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       {
         key: "rooms",
         labelKey: "sidebar.manageRooms",
-        route: "/rooms",
+        route: "/experts",
         icon: "HotelIcon",
         feature: "rooms",
       },
@@ -140,7 +140,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       {
         key: "tables",
         labelKey: "sidebar.manageTables",
-        route: "/tables",
+        route: "/experts",
         icon: "TableRestaurantIcon",
         feature: "tables",
       },
@@ -188,7 +188,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       {
         key: "tables",
         labelKey: "sidebar.manageTables",
-        route: "/tables",
+        route: "/experts",
         icon: "TableRestaurantIcon",
         feature: "tables",
       },
