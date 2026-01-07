@@ -10,12 +10,14 @@ export type IndustryType =
   | "restaurant" 
   | "spa" 
   | "fitness" 
-  | "clinic";
+  | "clinic"
+  | "travel_agency";
 
 export interface IndustryFeatures {
   experts: boolean;      // Güzellik salonu için true, otel için false
   rooms: boolean;        // Otel için true, güzellik salonu için false
   tables: boolean;       // Kafe/Restaurant için true
+  tours: boolean;        // Turizm acenteleri için true
   appointments: boolean; // Genelde hepsi için true
   customers: boolean;    // Genelde hepsi için true
   services: boolean;     // Hizmet yönetimi

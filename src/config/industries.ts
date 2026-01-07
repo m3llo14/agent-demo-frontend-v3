@@ -7,6 +7,7 @@ import { IndustryConfig, IndustryType } from "@/types/industry";
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import HotelIcon from "@mui/icons-material/Hotel";
 import TableRestaurantIcon from "@mui/icons-material/TableRestaurant";
+import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
 import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
 import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
@@ -18,6 +19,7 @@ export const iconMap: Record<string, React.ComponentType<any>> = {
   PeopleOutlinedIcon,
   HotelIcon,
   TableRestaurantIcon,
+  FlightTakeoffIcon,
   ContactsOutlinedIcon,
   ReceiptOutlinedIcon,
   CalendarTodayOutlinedIcon,
@@ -35,6 +37,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       experts: true,
       rooms: false,
       tables: false,
+      tours: false,
       appointments: true,
       customers: true,
       services: true,
@@ -83,6 +86,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       experts: false,
       rooms: true,
       tables: false,
+      tours: false,
       appointments: true,
       customers: true,
       services: true,
@@ -131,6 +135,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       experts: false,
       rooms: false,
       tables: true,
+      tours: false,
       appointments: true,
       customers: true,
       services: true,
@@ -179,6 +184,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       experts: false,
       rooms: false,
       tables: true,
+      tours: false,
       appointments: true,
       customers: true,
       services: true,
@@ -227,6 +233,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       experts: true,
       rooms: false,
       tables: false,
+      tours: false,
       appointments: true,
       customers: true,
       services: true,
@@ -275,6 +282,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       experts: true,
       rooms: false,
       tables: false,
+      tours: false,
       appointments: true,
       customers: true,
       services: true,
@@ -323,6 +331,7 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       experts: true,
       rooms: false,
       tables: false,
+      tours: false,
       appointments: true,
       customers: true,
       services: true,
@@ -362,6 +371,55 @@ export const industryConfigs: Record<IndustryType, IndustryConfig> = {
       customer: "fieldMappings.patient",
       appointment: "fieldMappings.appointment",
       service: "fieldMappings.service",
+    },
+  },
+  travel_agency: {
+    type: "travel_agency",
+    name: "Travel Agency",
+    features: {
+      experts: false,
+      rooms: false,
+      tables: false,
+      tours: true,
+      appointments: true,
+      customers: true,
+      services: true,
+      staff: true,
+    },
+    menuItems: [
+      {
+        key: "tours",
+        labelKey: "sidebar.manageTours",
+        route: "/experts",
+        icon: "FlightTakeoffIcon",
+        feature: "tours",
+      },
+      {
+        key: "customers",
+        labelKey: "sidebar.customers",
+        route: "/customers",
+        icon: "ContactsOutlinedIcon",
+        feature: "customers",
+      },
+      {
+        key: "callLogs",
+        labelKey: "sidebar.callLogs",
+        route: "/calls",
+        icon: "ReceiptOutlinedIcon",
+      },
+      {
+        key: "calendar",
+        labelKey: "sidebar.calendar",
+        route: "/calendar",
+        icon: "CalendarTodayOutlinedIcon",
+        feature: "appointments",
+      },
+    ],
+    fieldMappings: {
+      expert: "fieldMappings.tour",
+      customer: "fieldMappings.customer",
+      appointment: "fieldMappings.booking",
+      service: "fieldMappings.package",
     },
   },
 };

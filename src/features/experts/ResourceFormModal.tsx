@@ -16,7 +16,7 @@ import {
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCompany } from "@/contexts/CompanyContext";
-import { Resource, Expert, Room, RestaurantTable } from "@/types/resources";
+import { Resource, Expert, Room, RestaurantTable, Tour } from "@/types/resources";
 
 interface ResourceFormModalProps {
   open: boolean;
@@ -65,6 +65,16 @@ export default function ResourceFormModal({
     status: "available" as "available" | "occupied" | "reserved",
   });
 
+  const [tourFormData, setTourFormData] = useState({
+    tourName: "",
+    destination: "",
+    duration: "",
+    capacity: "",
+    price: "",
+    status: "available" as "available" | "full" | "cancelled",
+    departureDate: "",
+  });
+
   // Form data'yı resource'dan yükle
   useEffect(() => {
     if (mode === "edit" && resource) {
@@ -95,6 +105,17 @@ export default function ResourceFormModal({
           location: table.location,
           status: table.status,
         });
+      } else if (resource.type === "tour") {
+        const tour = resource as Tour;
+        setTourFormData({
+          tourName: tour.tourName,
+          destination: tour.destination,
+          duration: tour.duration.toString(),
+          capacity: tour.capacity.toString(),
+          price: tour.price.toString(),
+          status: tour.status,
+          departureDate: tour.departureDate || "",
+        });
       }
     } else {
       // Reset form
@@ -118,6 +139,15 @@ export default function ResourceFormModal({
         capacity: "",
         location: "indoor",
         status: "available",
+      });
+      setTourFormData({
+        tourName: "",
+        destination: "",
+        duration: "",
+        capacity: "",
+        price: "",
+        status: "available",
+        departureDate: "",
       });
     }
     setErrors({});
@@ -169,6 +199,25 @@ export default function ResourceFormModal({
     return Object.keys(newErrors).length === 0;
   };
 
+  const validateTour = (): boolean => {
+    const newErrors: Record<string, string> = {};
+    if (!tourFormData.tourName.trim())
+      newErrors.tourName = t("tours.form.validation.tourNameRequired");
+    if (!tourFormData.destination.trim())
+      newErrors.destination = t("tours.form.validation.destinationRequired");
+    const duration = parseInt(tourFormData.duration);
+    if (!tourFormData.duration || isNaN(duration) || duration < 1 || duration > 30)
+      newErrors.duration = t("tours.form.validation.durationInvalid");
+    const capacity = parseInt(tourFormData.capacity);
+    if (!tourFormData.capacity || isNaN(capacity) || capacity < 1 || capacity > 100)
+      newErrors.capacity = t("tours.form.validation.capacityInvalid");
+    const price = parseFloat(tourFormData.price);
+    if (!tourFormData.price || isNaN(price) || price <= 0)
+      newErrors.price = t("tours.form.validation.priceInvalid");
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -197,6 +246,19 @@ export default function ResourceFormModal({
         location: tableFormData.location,
         status: tableFormData.status,
       } as RestaurantTable;
+    } else if (industryConfig?.type === "travel_agency") {
+      isValid = validateTour();
+      if (!isValid) return;
+      resourceData = {
+        type: "tour",
+        tourName: tourFormData.tourName.trim(),
+        destination: tourFormData.destination.trim(),
+        duration: parseInt(tourFormData.duration),
+        capacity: parseInt(tourFormData.capacity),
+        price: parseFloat(tourFormData.price),
+        status: tourFormData.status,
+        departureDate: tourFormData.departureDate || undefined,
+      } as Tour;
     } else {
       isValid = validateExpert();
       if (!isValid) return;
@@ -237,6 +299,11 @@ export default function ResourceFormModal({
 
   const handleTableChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
     setTableFormData((prev) => ({ ...prev, [field]: e.target.value }));
+    if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
+  };
+
+  const handleTourChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    setTourFormData((prev) => ({ ...prev, [field]: e.target.value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: "" }));
   };
 
@@ -290,6 +357,8 @@ export default function ResourceFormModal({
       return mode === "create" ? t("rooms.form.addTitle") : t("rooms.form.editTitle");
     } else if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant") {
       return mode === "create" ? t("tables.form.addTitle") : t("tables.form.editTitle");
+    } else if (industryConfig?.type === "travel_agency") {
+      return mode === "create" ? t("tours.form.addTitle") : t("tours.form.editTitle");
     } else {
       return mode === "create" ? t("experts.form.addTitle") : t("experts.form.editTitle");
     }
@@ -440,6 +509,106 @@ export default function ResourceFormModal({
               {t("tables.status.reserved")}
             </MenuItem>
           </TextField>
+        </Box>
+      );
+    } else if (industryConfig?.type === "travel_agency") {
+      return (
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 3 }}>
+          <TextField
+            label={t("tours.form.tourName")}
+            value={tourFormData.tourName}
+            onChange={handleTourChange("tourName")}
+            fullWidth
+            required
+            error={!!errors.tourName}
+            helperText={errors.tourName}
+            sx={textFieldStyles}
+          />
+          <TextField
+            label={t("tours.form.destination")}
+            value={tourFormData.destination}
+            onChange={handleTourChange("destination")}
+            fullWidth
+            required
+            error={!!errors.destination}
+            helperText={errors.destination}
+            sx={textFieldStyles}
+          />
+          <Box sx={{ display: "flex", gap: 2 }}>
+            <TextField
+              label={t("tours.form.duration")}
+              type="number"
+              value={tourFormData.duration}
+              onChange={handleTourChange("duration")}
+              fullWidth
+              required
+              error={!!errors.duration}
+              helperText={errors.duration}
+              inputProps={{ min: 1, max: 30 }}
+              sx={textFieldStyles}
+            />
+            <TextField
+              label={t("tours.form.capacity")}
+              type="number"
+              value={tourFormData.capacity}
+              onChange={handleTourChange("capacity")}
+              fullWidth
+              required
+              error={!!errors.capacity}
+              helperText={errors.capacity}
+              inputProps={{ min: 1, max: 100 }}
+              sx={textFieldStyles}
+            />
+          </Box>
+          <TextField
+            label={t("tours.form.price")}
+            type="number"
+            value={tourFormData.price}
+            onChange={handleTourChange("price")}
+            fullWidth
+            required
+            error={!!errors.price}
+            helperText={errors.price}
+            inputProps={{ min: 0, step: 0.01 }}
+            sx={textFieldStyles}
+          />
+          <TextField
+            label={t("tours.form.status")}
+            select
+            value={tourFormData.status}
+            onChange={handleTourChange("status")}
+            fullWidth
+            required
+            sx={selectFieldStyles}
+          >
+            <MenuItem
+              value="available"
+              sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}
+            >
+              {t("tours.status.available")}
+            </MenuItem>
+            <MenuItem
+              value="full"
+              sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}
+            >
+              {t("tours.status.full")}
+            </MenuItem>
+            <MenuItem
+              value="cancelled"
+              sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}
+            >
+              {t("tours.status.cancelled")}
+            </MenuItem>
+          </TextField>
+          <TextField
+            label={t("tours.form.departureDate")}
+            type="date"
+            value={tourFormData.departureDate}
+            onChange={handleTourChange("departureDate")}
+            fullWidth
+            InputLabelProps={{ shrink: true }}
+            sx={textFieldStyles}
+          />
         </Box>
       );
     } else {

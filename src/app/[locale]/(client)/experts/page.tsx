@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -31,22 +31,49 @@ export default function ExpertsPage() {
   const [modalMode, setModalMode] = useState<"create" | "edit">("create");
 
   // Eğer bu sektörde ilgili özellik yoksa, dashboard'a yönlendir
-  if (industryConfig) {
-    const hasFeature =
-      industryConfig.features.experts ||
-      industryConfig.features.rooms ||
-      industryConfig.features.tables;
-    if (!hasFeature) {
-      router.push(`/${locale}/dashboard`);
-      return null;
+  useEffect(() => {
+    if (industryConfig) {
+      const hasFeature =
+        industryConfig.features.experts ||
+        industryConfig.features.rooms ||
+        industryConfig.features.tables ||
+        industryConfig.features.tours;
+      if (!hasFeature) {
+        router.push(`/${locale}/dashboard`);
+      }
     }
+  }, [industryConfig, locale, router]);
+
+  // Eğer company config yoksa, loading göster
+  if (!industryConfig) {
+    return (
+      <Box
+        display="flex"
+        justifyContent="center"
+        alignItems="center"
+        minHeight="400px"
+      >
+        <CircularProgress />
+      </Box>
+    );
   }
 
-  // Sektöre göre dinamik başlık ve buton metinleri
+  // Feature kontrolü - eğer hiçbir feature yoksa, boş render (useEffect yönlendirecek)
+  const hasFeature =
+    industryConfig.features.experts ||
+    industryConfig.features.rooms ||
+    industryConfig.features.tables ||
+    industryConfig.features.tours;
+
+  if (!hasFeature) {
+    return null; // useEffect yönlendirecek
+  }
+
   const getPageTitle = () => {
     if (industryConfig?.type === "hotel") return t("rooms.title");
     if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
       return t("tables.title");
+    if (industryConfig?.type === "travel_agency") return t("tours.title");
     return t("experts.title");
   };
 
@@ -54,6 +81,7 @@ export default function ExpertsPage() {
     if (industryConfig?.type === "hotel") return t("rooms.subtitle");
     if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
       return t("tables.subtitle");
+    if (industryConfig?.type === "travel_agency") return t("tours.subtitle");
     return t("experts.subtitle");
   };
 
@@ -61,6 +89,7 @@ export default function ExpertsPage() {
     if (industryConfig?.type === "hotel") return t("rooms.addNew");
     if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
       return t("tables.addNew");
+    if (industryConfig?.type === "travel_agency") return t("tours.addNew");
     return t("experts.addNew");
   };
 
@@ -68,6 +97,7 @@ export default function ExpertsPage() {
     if (industryConfig?.type === "hotel") return t("rooms.noRooms");
     if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
       return t("tables.noTables");
+    if (industryConfig?.type === "travel_agency") return t("tours.noTours");
     return t("experts.noExperts");
   };
 
@@ -75,6 +105,7 @@ export default function ExpertsPage() {
     if (industryConfig?.type === "hotel") return t("rooms.form.deleteConfirm");
     if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
       return t("tables.form.deleteConfirm");
+    if (industryConfig?.type === "travel_agency") return t("tours.form.deleteConfirm");
     return t("experts.form.deleteConfirm");
   };
 
@@ -82,6 +113,7 @@ export default function ExpertsPage() {
     if (industryConfig?.type === "hotel") return t("rooms.form.deleteError");
     if (industryConfig?.type === "cafe" || industryConfig?.type === "restaurant")
       return t("tables.form.deleteError");
+    if (industryConfig?.type === "travel_agency") return t("tours.form.deleteError");
     return t("experts.form.deleteError");
   };
 

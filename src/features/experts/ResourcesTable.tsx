@@ -17,7 +17,7 @@ import DeleteOutlinedIcon from "@mui/icons-material/DeleteOutlined";
 import { tokens } from "@/themes/colors";
 import { useLocale } from "@/contexts/LocaleContext";
 import { useCompany } from "@/contexts/CompanyContext";
-import { Resource, Expert, Room, RestaurantTable } from "@/types/resources";
+import { Resource, Expert, Room, RestaurantTable, Tour } from "@/types/resources";
 
 interface ResourcesTableProps {
   resources: Resource[];
@@ -142,6 +142,75 @@ const ResourcesTable = ({ resources, onEdit, onDelete }: ResourcesTableProps) =>
             }}
           >
             {t("tables.table.actions")}
+          </TableCell>
+        </>
+      );
+    } else if (industryConfig?.type === "travel_agency") {
+      return (
+        <>
+          <TableCell
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+            }}
+          >
+            {t("tours.table.tourName")}
+          </TableCell>
+          <TableCell
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+            }}
+          >
+            {t("tours.table.destination")}
+          </TableCell>
+          <TableCell
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+            }}
+          >
+            {t("tours.table.duration")}
+          </TableCell>
+          <TableCell
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+            }}
+          >
+            {t("tours.table.capacity")}
+          </TableCell>
+          <TableCell
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+            }}
+          >
+            {t("tours.table.price")}
+          </TableCell>
+          <TableCell
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+            }}
+          >
+            {t("tours.table.status")}
+          </TableCell>
+          <TableCell
+            sx={{
+              color: isLightMode ? colors.grey[100] : colors.grey[100],
+              fontWeight: "bold",
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+              textAlign: "center",
+            }}
+          >
+            {t("tours.table.actions")}
           </TableCell>
         </>
       );
@@ -308,6 +377,71 @@ const ResourcesTable = ({ resources, onEdit, onDelete }: ResourcesTableProps) =>
                 </IconButton>
                 <IconButton
                   onClick={() => onDelete(table.id)}
+                  sx={{
+                    color: colors.redAccent[500],
+                    "&:hover": {
+                      backgroundColor: isLightMode
+                        ? colors.redAccent[900]
+                        : colors.redAccent[800],
+                    },
+                  }}
+                  size="small"
+                >
+                  <DeleteOutlinedIcon />
+                </IconButton>
+              </Box>
+            </TableCell>
+          </TableRow>
+        );
+      } else if (resource.type === "tour") {
+        const tour = resource as Tour;
+        return (
+          <TableRow
+            key={tour.id}
+            sx={{
+              backgroundColor: isLightMode ? "#ffffff" : "transparent",
+              "&:hover": {
+                backgroundColor: isLightMode ? colors.grey[900] : colors.primary[500],
+              },
+              borderBottom: `1px solid ${isLightMode ? colors.grey[800] : colors.grey[700]}`,
+            }}
+          >
+            <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
+              {tour.tourName}
+            </TableCell>
+            <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
+              {tour.destination}
+            </TableCell>
+            <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
+              {tour.duration} {t("common.days")}
+            </TableCell>
+            <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
+              {tour.capacity}
+            </TableCell>
+            <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
+              {tour.price.toLocaleString()} ₺
+            </TableCell>
+            <TableCell sx={{ color: isLightMode ? colors.grey[100] : colors.grey[100] }}>
+              {t(`tours.status.${tour.status}`)}
+            </TableCell>
+            <TableCell>
+              <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
+                <IconButton
+                  onClick={() => onEdit(tour)}
+                  sx={{
+                    color: colors.blueAccent[500],
+                    "&:hover": {
+                      backgroundColor: isLightMode
+                        ? colors.blueAccent[900]
+                        : colors.blueAccent[800],
+                    },
+                  }}
+                  size="small"
+                >
+                  <EditOutlinedIcon />
+                </IconButton>
+                <IconButton
+                  onClick={() => onDelete(tour.id)}
                   sx={{
                     color: colors.redAccent[500],
                     "&:hover": {

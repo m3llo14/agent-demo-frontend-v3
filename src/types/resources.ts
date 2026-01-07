@@ -3,7 +3,7 @@
  * Multi-industry support için farklı sektörlerdeki kaynak tipleri
  */
 
-export type ResourceType = "expert" | "room" | "table";
+export type ResourceType = "expert" | "room" | "table" | "tour";
 
 // Base interface
 export interface BaseResource {
@@ -40,8 +40,20 @@ export interface RestaurantTable extends BaseResource {
   status: "available" | "occupied" | "reserved";
 }
 
+// Tour (Travel Agency için)
+export interface Tour extends BaseResource {
+  type: "tour";
+  tourName: string;
+  destination: string;
+  duration: number; // Gün cinsinden
+  price: number;
+  capacity: number;
+  status: "available" | "full" | "cancelled";
+  departureDate?: string; // ISO date string (YYYY-MM-DD)
+}
+
 // Union type - Tüm resource tipleri
-export type Resource = Expert | Room | RestaurantTable;
+export type Resource = Expert | Room | RestaurantTable | Tour;
 
 // Response type
 export interface ResourcesResponse {

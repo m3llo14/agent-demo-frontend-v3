@@ -62,6 +62,8 @@ export const authService = {
             industry = "fitness";
           } else if (credentials.email.includes("@clinic.") || credentials.email.includes("clinic@")) {
             industry = "clinic";
+          } else if (credentials.email.includes("travel@") || credentials.email.includes("@travel.")) {
+            industry = "travel_agency";
           } else {
             industry = "beauty_salon"; // Default
           }

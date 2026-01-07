@@ -1,5 +1,5 @@
 import apiClient from "@/lib/api-client";
-import { Resource, ResourcesResponse, Expert, Room, RestaurantTable } from "@/types/resources";
+import { Resource, ResourcesResponse, Expert, Room, RestaurantTable, Tour } from "@/types/resources";
 import { IndustryType } from "@/types/industry";
 import { MOCK_DELAYS } from "@/lib/constants";
 
@@ -15,7 +15,7 @@ export const resourcesService = {
    */
   async getAll(industryType: IndustryType): Promise<ResourcesResponse> {
     // TODO: Backend entegrasyonu aktif olduğunda bu kodu kullan
-    // const endpoint = industryType === "hotel" ? "/rooms" : industryType === "cafe" || industryType === "restaurant" ? "/tables" : "/experts";
+    // const endpoint = industryType === "hotel" ? "/rooms" : industryType === "cafe" || industryType === "restaurant" ? "/tables" : industryType === "travel_agency" ? "/tours" : "/experts";
     // return apiClient.get<ResourcesResponse>(endpoint);
 
     // Mock implementation
@@ -76,6 +76,34 @@ export const resourcesService = {
               },
             ] as RestaurantTable[],
             total: 3,
+          });
+        } else if (industryType === "travel_agency") {
+          resolve({
+            resources: [
+              {
+                id: "1",
+                type: "tour",
+                tourName: "Kapadokya Balon Turu",
+                destination: "Kapadokya, Türkiye",
+                duration: 3,
+                capacity: 20,
+                price: 5000,
+                status: "available",
+                departureDate: "2025-06-15",
+              },
+              {
+                id: "2",
+                type: "tour",
+                tourName: "Antalya Kıyı Turu",
+                destination: "Antalya, Türkiye",
+                duration: 5,
+                capacity: 30,
+                price: 7500,
+                status: "full",
+                departureDate: "2025-07-20",
+              },
+            ] as Tour[],
+            total: 2,
           });
         } else {
           // Default: experts (beauty_salon, spa, fitness, clinic)
